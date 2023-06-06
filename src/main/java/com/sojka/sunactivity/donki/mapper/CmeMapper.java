@@ -17,6 +17,9 @@ public final class CmeMapper {
     }
 
     public static EarthGbCme mapEarthGbCme(Cme cme) {
+        if (!cme.willDeliverEarthGlancingBlow()) {
+            throw new CmeMapperException("Given CME will not deliver glancing blow to Earth");
+        }
         WsaEnlil simulation = getMostRecentSimulation(cme);
         Cme.CmeAnalyze analyze = getMostRecentCmeAnalyze(cme);
 

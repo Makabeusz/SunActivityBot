@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.URL;
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -22,6 +26,19 @@ public class Cme {
     private Set<Instrument> instruments;
     private Set<CmeAnalyze> cmeAnalyses;
     private Set<Event> linkedEvents;
+
+    public boolean willDeliverEarthGlancingBlow() {
+        if (this.cmeAnalyses == null) {
+            return false;
+        }
+        return cmeAnalyses.stream()
+                .map(Cme.CmeAnalyze::getEnlilList)
+                .filter(Objects::nonNull)
+                .flatMap(Collection::stream)
+                .max(Comparator.comparing(sim -> ZonedDateTime.parse(sim.getModelCompletionTime())))
+                .orElse(WsaEnlil.builder().isEarthGB(false).build())
+                .getIsEarthGB();
+    }
 
     @Data
     public static class Instrument {
@@ -43,7 +60,6 @@ public class Cme {
         private Integer levelOfData;
         private URL link;
         private Set<WsaEnlil> enlilList;
-
     }
 
     @Data

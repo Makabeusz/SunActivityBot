@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -24,28 +21,18 @@ public class DonkiService {
 
     private final DonkiHttpClient http;
 
-    public Set<EarthGbCme> getYesterdayEarthGbCmes() {
-        Date yesterday = new Date(Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli());
-        var yesterdayCmes = http.getCMEs(yesterday, yesterday).getBody();
-        Objects.requireNonNull(yesterdayCmes);
-        return yesterdayCmes.stream()
-                .filter(DonkiService::willDeliverEarthGlancingBlow)
+    public Set<EarthGbCme> getEarthGbCmes(Date from, Date to) {
+        var cmes = http.getCMEs(from, to).getBody();
+        Objects.requireNonNull(cmes);
+        return cmes.stream()
+                .filter(Cme::willDeliverEarthGlancingBlow)
                 .map(CmeMapper::mapEarthGbCme)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
-    private static boolean willDeliverEarthGlancingBlow(Cme cme) {
-        if (cme.getCmeAnalyses() == null) {
-            return false;
-        }
-        return cme.getCmeAnalyses().stream()
-                .map(Cme.CmeAnalyze::getEnlilList)
-                .filter(Objects::nonNull)
-                .flatMap(Collection::stream)
-                .max(Comparator.comparing(sim -> ZonedDateTime.parse(sim.getModelCompletionTime())))
-                .orElseThrow()
-                .getIsEarthGB();
+    public Set<EarthGbCme> getYesterdayEarthGbCmes() {
+        Date yesterday = new Date(Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli());
+        return getEarthGbCmes(yesterday, yesterday);
     }
-
 
 }
