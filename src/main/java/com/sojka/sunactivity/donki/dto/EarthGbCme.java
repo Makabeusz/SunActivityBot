@@ -1,0 +1,86 @@
+package com.sojka.sunactivity.donki.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.net.URL;
+import java.util.Set;
+
+/**
+ * Coronal Mass Ejection that make glance blow on earth with embedded inside,
+ * the most fresh WSA-ENLIL simulation.
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class EarthGbCme {
+
+    private String id;
+    private String catalog;
+    private Time time;
+    private String sourceLocation;
+    private String activeRegion;
+    private URL cmeUrl;
+    private URL wsaEnlilUrl;
+    private String note;
+    private Set<String> instruments;
+    private KpIndexes kpIndex;
+    private Set<String> linkedEvents;
+    private Set<Impact> impacts;
+
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Time {
+
+        private String startTime;
+        private String arrivalTime;
+        private Float duration;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Analysis {
+
+        private String time;
+        private Float latitude;
+        private Float longitude;
+        private Float halfAngle;
+        private Float speed;
+        private String type;
+        private Boolean isMostAccurate;
+        private String note;
+        private Integer levelOfData;
+        private URL url;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class KpIndexes {
+
+        private Integer kp18;
+        private Integer kp90;
+        private Integer kp135;
+        private Integer kp180;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Impact {
+
+        private Boolean isGlancingBlow;
+        private String location;
+        private String arrivalTime;
+    }
+}
