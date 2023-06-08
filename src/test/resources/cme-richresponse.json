@@ -1,0 +1,201 @@
+{
+  "activityID": "2023-04-18T23:48:00-CME-001",
+  "catalog": "M2M_CATALOG",
+  "startTime": "2023-04-18T23:48Z",
+  "sourceLocation": "S20E90",
+  "activeRegionNum": 13283,
+  "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/CME/24696/-1",
+  "note": "Faint and narrow CME seen to the W in SOHO LASCO C2/C3. Data gap in STEREO-A COR2.",
+  "instruments": [
+    {
+      "displayName": "SOHO: LASCO/C2"
+    },
+    {
+      "displayName": "SOHO: LASCO/C3"
+    }
+  ],
+  "cmeAnalyses": [
+    {
+      "time21_5": "2023-04-19T09:40Z",
+      "latitude": 1.0,
+      "longitude": 90.0,
+      "halfAngle": 12.0,
+      "speed": 371.0,
+      "type": "S",
+      "isMostAccurate": true,
+      "note": "Leading edge is diffuse. CME is visible for one frame in STEREO A COR2.",
+      "levelOfData": 0,
+      "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/CMEAnalysis/24697/-1",
+      "enlilList": [
+        {
+          "modelCompletionTime": "2023-04-19T17:46Z",
+          "au": 2.0,
+          "estimatedShockArrivalTime": null,
+          "estimatedDuration": null,
+          "rmin_re": null,
+          "kp_18": null,
+          "kp_90": null,
+          "kp_135": null,
+          "kp_180": null,
+          "isEarthGB": false,
+          "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24698/-1",
+          "impactList": [
+            {
+              "isGlancingBlow": false,
+              "location": "Parker Solar Probe",
+              "arrivalTime": "2023-04-21T08:00Z"
+            },
+            {
+              "isGlancingBlow": true,
+              "location": "Solar Orbiter",
+              "arrivalTime": "2023-04-20T06:00Z"
+            }
+          ],
+          "cmeIDs": [
+            "2023-04-18T23:48:00-CME-001"
+          ]
+        },
+        {
+          "modelCompletionTime": "2023-04-21T13:12Z",
+          "au": 2.0,
+          "estimatedShockArrivalTime": "2023-04-23T19:05Z",
+          "estimatedDuration": 26.1,
+          "rmin_re": 5.1,
+          "kp_18": 5,
+          "kp_90": 6,
+          "kp_135": 7,
+          "kp_180": 8,
+          "isEarthGB": true,
+          "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24715/-1",
+          "impactList": [
+            {
+              "isGlancingBlow": false,
+              "location": "Parker Solar Probe",
+              "arrivalTime": "2023-04-23T04:24Z"
+            },
+            {
+              "isGlancingBlow": false,
+              "location": "Solar Orbiter",
+              "arrivalTime": "2023-04-22T06:53Z"
+            }
+          ],
+          "cmeIDs": [
+            "2023-04-21T06:24:00-CME-001"
+          ]
+        },
+        {
+          "modelCompletionTime": "2023-04-21T20:31Z",
+          "au": 2.0,
+          "estimatedShockArrivalTime": "2023-04-23T19:05Z",
+          "estimatedDuration": 26.1,
+          "rmin_re": 5.1,
+          "kp_18": null,
+          "kp_90": 6,
+          "kp_135": 7,
+          "kp_180": 8,
+          "isEarthGB": true,
+          "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24725/-1",
+          "impactList": [
+            {
+              "isGlancingBlow": false,
+              "location": "OSIRIS-REx",
+              "arrivalTime": "2023-04-24T22:44Z"
+            },
+            {
+              "isGlancingBlow": false,
+              "location": "STEREO A",
+              "arrivalTime": "2023-04-23T18:24Z"
+            }
+          ],
+          "cmeIDs": [
+            "2023-04-21T18:12:00-CME-001"
+          ]
+        }
+      ]
+    },
+    {
+      "time21_5": "2023-04-21T21:09Z",
+      "latitude": -13.0,
+      "longitude": 19.0,
+      "halfAngle": 43.0,
+      "speed": 1204.0,
+      "type": "O",
+      "isMostAccurate": true,
+      "note": "Measurement of the bulk portion, based on the best fit between preliminary imagery of SOHO LASCO C2 and STEREO A COR2.",
+      "levelOfData": 0,
+      "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/CMEAnalysis/24724/-1",
+      "enlilList": [
+        {
+          "modelCompletionTime": "2023-04-21T20:10Z",
+          "au": 2.0,
+          "estimatedShockArrivalTime": "2023-04-23T19:05Z",
+          "estimatedDuration": 26.1,
+          "rmin_re": 6.1,
+          "kp_18": null,
+          "kp_90": 4,
+          "kp_135": 6,
+          "kp_180": 7,
+          "isEarthGB": false,
+          "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24725/-1",
+          "impactList": [
+            {
+              "isGlancingBlow": false,
+              "location": "OSIRIS-REx",
+              "arrivalTime": "2023-04-24T22:44Z"
+            },
+            {
+              "isGlancingBlow": false,
+              "location": "STEREO A",
+              "arrivalTime": "2023-04-23T18:24Z"
+            }
+          ],
+          "cmeIDs": [
+            "2023-04-21T18:12:00-CME-001"
+          ]
+        }
+      ]
+    },
+    {
+      "time21_5": "2023-04-21T20:38Z",
+      "latitude": -22.0,
+      "longitude": -2.0,
+      "halfAngle": 55.0,
+      "speed": 1432.0,
+      "type": "O",
+      "isMostAccurate": false,
+      "note": "Shock front measurement assuming a larger half-width (>45 degrees) given the signature seen in SDO 193 and the relatively flattened shape the faint leading edge of the halo takes at its poles to the north and south.",
+      "levelOfData": 0,
+      "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/CMEAnalysis/24721/-1",
+      "enlilList": null
+    },
+    {
+      "time21_5": "2023-04-21T21:29Z",
+      "latitude": -14.0,
+      "longitude": 14.0,
+      "halfAngle": 45.0,
+      "speed": 1087.0,
+      "type": "O",
+      "isMostAccurate": false,
+      "note": "Bulk measurement following a brighter leading edge seen within the core structure of the halo CME in later frames mostly to the south and east.",
+      "levelOfData": 0,
+      "link": "https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/CMEAnalysis/24722/-1",
+      "enlilList": null
+    }
+  ],
+  "linkedEvents": [
+    {
+      "activityID": "2023-04-21T17:44:00-FLR-001"
+    },
+    {
+      "activityID": "2023-04-23T11:48:00-SEP-001"
+    },
+    {
+      "activityID": "2023-04-23T13:58:00-SEP-001"
+    },
+    {
+      "activityID": "2023-04-23T14:00:00-IPS-001"
+    }
+  ]
+}
+
+

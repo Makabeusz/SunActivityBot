@@ -24,13 +24,13 @@ public class EarthGbCme {
     private String sourceLocation;
     private String activeRegion;
     private URL cmeUrl;
-    private URL wsaEnlilUrl;
+    private URL simulationUrl;
     private String note;
     private Set<String> instruments;
     private KpIndexes kpIndex;
     private Set<String> linkedEvents;
     private Set<Impact> impacts;
-
+    private Analysis analysis;
 
     @Data
     @NoArgsConstructor
@@ -41,6 +41,8 @@ public class EarthGbCme {
         private String startTime;
         private String arrivalTime;
         private Float duration;
+        private String simulationTime;
+        private String analysisTime;
     }
 
     @Data
@@ -49,7 +51,6 @@ public class EarthGbCme {
     @Builder
     public static class Analysis {
 
-        private String time;
         private Float latitude;
         private Float longitude;
         private Float halfAngle;

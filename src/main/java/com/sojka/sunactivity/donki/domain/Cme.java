@@ -14,16 +14,16 @@ import java.util.Set;
 @Builder
 public class Cme {
 
-    private String activityID;//
-    private String catalog;//
-    private String startTime;//
-    private String sourceLocation;//
-    private String activeRegionNum;//
-    private URL link;//
-    private String note;//
-    private Set<Instrument> instruments;//
-    private Set<CmeAnalyze> cmeAnalyses;//
-    private Set<Event> linkedEvents;//
+    private String activityID;
+    private String catalog;
+    private String startTime;
+    private String sourceLocation;
+    private String activeRegionNum;
+    private URL link;
+    private String note;
+    private Set<Instrument> instruments;
+    private Set<CmeAnalyze> cmeAnalyses;
+    private Set<Event> linkedEvents;
 
     @Data
     public static class Instrument {
@@ -32,7 +32,7 @@ public class Cme {
     }
 
     @Data
-    public static class CmeAnalyze { //
+    public static class CmeAnalyze {
 
         private String time21_5;
         private Float latitude;
