@@ -31,7 +31,7 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     private KpIndexes kpIndex;
     private Set<String> linkedEvents;
     private Set<Impact> impacts;
-    private Analysis analysis;
+    private Analyze analyze;
 
     @Override
     public int compareTo(EarthGbCme o) {
@@ -56,7 +56,7 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Analysis {
+    public static class Analyze {
 
         private Float latitude;
         private Float longitude;

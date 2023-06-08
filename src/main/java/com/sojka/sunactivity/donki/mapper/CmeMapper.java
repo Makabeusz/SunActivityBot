@@ -8,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class CmeMapper {
@@ -47,14 +48,28 @@ public final class CmeMapper {
                         .kp135(simulation.getKp_135())
                         .kp180(simulation.getKp_180())
                         .build())
-                .linkedEvents(cme.getLinkedEvents().stream()
-                        .map(Cme.Event::getActivityID)
-                        .collect(Collectors.toSet()))
-                .impacts(simulation.getImpactList().stream()
-                        .map(CmeMapper::mapEarthGbCmeImpact)
-                        .collect(Collectors.toSet()))
-                .analysis(mapEarthGbCmeAnalysis(analyze))
+                .linkedEvents(mapLinkedEvents(cme))
+                .impacts(mapImpacts(simulation))
+                .analyze(mapAnalyze(analyze))
                 .build();
+    }
+
+    private static Set<EarthGbCme.Impact> mapImpacts(WsaEnlil simulation) {
+        if (simulation.getImpactList() == null) {
+            return null;
+        }
+        return simulation.getImpactList().stream()
+                .map(CmeMapper::mapImpact)
+                .collect(Collectors.toSet());
+    }
+
+    private static Set<String> mapLinkedEvents(Cme cme) {
+        if (cme.getLinkedEvents() == null) {
+            return null;
+        }
+        return cme.getLinkedEvents().stream()
+                .map(Cme.Event::getActivityID)
+                .collect(Collectors.toSet());
     }
 
     private static Cme.CmeAnalyze getMostRecentCmeAnalyze(Cme cme) {
@@ -72,7 +87,7 @@ public final class CmeMapper {
                 .orElseThrow(() -> new CmeMapperException("Missing WSA-ENLIL simulation"));
     }
 
-    private static EarthGbCme.Impact mapEarthGbCmeImpact(WsaEnlil.Impact impact) {
+    private static EarthGbCme.Impact mapImpact(WsaEnlil.Impact impact) {
         return EarthGbCme.Impact.builder()
                 .arrivalTime(impact.getArrivalTime())
                 .location(impact.getLocation())
@@ -80,8 +95,8 @@ public final class CmeMapper {
                 .build();
     }
 
-    private static EarthGbCme.Analysis mapEarthGbCmeAnalysis(Cme.CmeAnalyze analyze) {
-        return EarthGbCme.Analysis.builder()
+    private static EarthGbCme.Analyze mapAnalyze(Cme.CmeAnalyze analyze) {
+        return EarthGbCme.Analyze.builder()
                 .latitude(analyze.getLatitude())
                 .longitude(analyze.getLongitude())
                 .halfAngle(analyze.getHalfAngle())
