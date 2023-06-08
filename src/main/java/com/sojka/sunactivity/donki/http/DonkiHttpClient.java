@@ -39,12 +39,4 @@ public class DonkiHttpClient {
                 .block();
     }
 
-//    public static void main(String[] args) {
-//        long may20th = new GregorianCalendar(2023, Calendar.MAY, 20).toInstant().toEpochMilli();
-//        Date may20Date = new Date(may20th);
-//        Objects.requireNonNull(new DonkiHttpClient("https://api.nasa.gov/DONKI").getCMEs(may20Date, may20Date)
-//                        .getBody()).forEach(System.out::println);
-//    }
-
-
 }
