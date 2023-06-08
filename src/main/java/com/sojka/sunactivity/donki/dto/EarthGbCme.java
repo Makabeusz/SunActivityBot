@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 /**
@@ -16,13 +17,13 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EarthGbCme {
+public class EarthGbCme implements Comparable<EarthGbCme> {
 
     private String id;
     private String catalog;
     private Time time;
     private String sourceLocation;
-    private String activeRegion;
+    private Integer activeRegion;
     private URL cmeUrl;
     private URL simulationUrl;
     private String note;
@@ -31,6 +32,12 @@ public class EarthGbCme {
     private Set<String> linkedEvents;
     private Set<Impact> impacts;
     private Analysis analysis;
+
+    @Override
+    public int compareTo(EarthGbCme o) {
+        return ZonedDateTime.parse(this.time.getStartTime())
+                .compareTo(ZonedDateTime.parse(o.time.getStartTime()));
+    }
 
     @Data
     @NoArgsConstructor

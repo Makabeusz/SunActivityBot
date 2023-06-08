@@ -66,7 +66,7 @@ public final class CmeMapper {
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .max(Comparator.comparing(sim -> ZonedDateTime.parse(sim.getModelCompletionTime())))
-                .orElseThrow();
+                .orElseThrow(() -> new CmeMapperException("Missing WSA-ENLIL simulation"));
     }
 
     private static EarthGbCme.Impact mapEarthGbCmeImpact(WsaEnlil.Impact impact) {

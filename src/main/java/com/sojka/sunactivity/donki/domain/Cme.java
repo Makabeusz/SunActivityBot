@@ -5,29 +5,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.URL;
-import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cme implements Comparable<Cme> {
+public class Cme {
 
     private String activityID;
     private String catalog;
     private String startTime;
     private String sourceLocation;
-    private String activeRegionNum;
+    private Integer activeRegionNum;
     private URL link;
     private String note;
     private Set<Instrument> instruments;
     private Set<CmeAnalyze> cmeAnalyses;
     private Set<Event> linkedEvents;
-
-    @Override
-    public int compareTo(Cme o) {
-        return ZonedDateTime.parse(this.startTime).compareTo(ZonedDateTime.parse(o.startTime));
-    }
 
     @Data
     public static class Instrument {

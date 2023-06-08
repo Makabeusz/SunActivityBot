@@ -1,35 +1,18 @@
 package com.sojka.sunactivity.donki.mapper;
 
+import com.sojka.sunactivity.donki.MockCme;
 import com.sojka.sunactivity.donki.domain.Cme;
 import com.sojka.sunactivity.donki.dto.EarthGbCme;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CmeMapperUnitTest {
 
-    private static EarthGbCme mapped;
-
-    @BeforeAll
-    static void beforeAll() {
-        try (InputStream input = CmeMapperUnitTest.class.getClassLoader()
-                .getResourceAsStream("cme-richresponse.json")) {
-            Objects.requireNonNull(input);
-            String sampleCmeResponse = new String(input.readAllBytes());
-            ObjectMapper mapper = new ObjectMapper();
-            Cme cme = mapper.readValue(sampleCmeResponse, Cme.class);
-            mapped = CmeMapper.mapEarthGbCme(cme);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static final Cme richCme = MockCme.getRichCme();
+    private static final EarthGbCme mapped = CmeMapper.mapEarthGbCme(richCme);
 
     @Test
     void mapEarthGbCme_richResponse_mostRecentAnalyze() {
