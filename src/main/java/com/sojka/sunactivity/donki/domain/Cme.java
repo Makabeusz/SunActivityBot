@@ -1,18 +1,17 @@
 package com.sojka.sunactivity.donki.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.URL;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Cme {
+public class Cme implements Comparable<Cme> {
 
     private String activityID;
     private String catalog;
@@ -24,6 +23,11 @@ public class Cme {
     private Set<Instrument> instruments;
     private Set<CmeAnalyze> cmeAnalyses;
     private Set<Event> linkedEvents;
+
+    @Override
+    public int compareTo(Cme o) {
+        return ZonedDateTime.parse(this.startTime).compareTo(ZonedDateTime.parse(o.startTime));
+    }
 
     @Data
     public static class Instrument {

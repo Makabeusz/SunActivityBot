@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Component
 public class DonkiHttpClient {
@@ -25,7 +25,7 @@ public class DonkiHttpClient {
                 .build();
     }
 
-    public ResponseEntity<List<Cme>> getCMEs(Date startDate, Date endDate) {
+    public ResponseEntity<Set<Cme>> getCMEs(Date startDate, Date endDate) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/CME")
@@ -34,16 +34,16 @@ public class DonkiHttpClient {
                         .queryParam("api_key", API_KEY)
                         .build())
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<List<Cme>>() {
+                .toEntity(new ParameterizedTypeReference<Set<Cme>>() {
                 })
                 .block();
     }
 
 //    public static void main(String[] args) {
-//        long may30th = new GregorianCalendar(2023, Calendar.MAY, 20).toInstant().toEpochMilli();
-//        Date may30Date = new Date(may30th);
-//        new DonkiHttpClient("https://api.nasa.gov/DONKI").getCMEs(may30Date, may30Date).getBody().stream()
-//                .forEach(System.out::println);
+//        long may20th = new GregorianCalendar(2023, Calendar.MAY, 20).toInstant().toEpochMilli();
+//        Date may20Date = new Date(may20th);
+//        Objects.requireNonNull(new DonkiHttpClient("https://api.nasa.gov/DONKI").getCMEs(may20Date, may20Date)
+//                        .getBody()).forEach(System.out::println);
 //    }
 
 
