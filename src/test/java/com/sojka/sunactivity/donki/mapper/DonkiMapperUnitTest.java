@@ -2,17 +2,17 @@ package com.sojka.sunactivity.donki.mapper;
 
 import com.sojka.sunactivity.donki.MockCme;
 import com.sojka.sunactivity.donki.domain.Cme;
-import com.sojka.sunactivity.donki.dto.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CmeMapperUnitTest {
+class DonkiMapperUnitTest {
 
     private static final Cme richCme = MockCme.getRichCme();
-    private static final EarthGbCme mapped = CmeMapper.mapEarthGbCme(richCme);
+    private static final EarthGbCme mapped = DonkiMapper.mapEarthGbCme(richCme);
 
     @Test
     void mapEarthGbCme_richResponse_mostRecentAnalyze() {

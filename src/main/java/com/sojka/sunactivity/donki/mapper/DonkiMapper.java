@@ -2,24 +2,23 @@ package com.sojka.sunactivity.donki.mapper;
 
 import com.sojka.sunactivity.donki.domain.Cme;
 import com.sojka.sunactivity.donki.domain.WsaEnlil;
-import com.sojka.sunactivity.donki.dto.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.EarthGbCme;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-public final class CmeMapper {
+public final class DonkiMapper {
 
-    private CmeMapper() {
+    private DonkiMapper() {
         throw new AssertionError();
     }
 
     public static EarthGbCme mapEarthGbCme(Cme cme) {
         if (!cme.willDeliverEarthGlancingBlow()) {
-            throw new CmeMapperException("Given CME will not deliver glancing blow to Earth");
+            throw new DonkiMapperException("Given CME will not deliver glancing blow to Earth");
         }
         WsaEnlil simulation = getMostRecentSimulation(cme);
         Cme.CmeAnalyze analyze = getMostRecentCmeAnalyze(cme);
@@ -41,7 +40,7 @@ public final class CmeMapper {
                 .note(cme.getNote())
                 .instruments(cme.getInstruments().stream()
                         .map(Cme.Instrument::getDisplayName)
-                        .collect(Collectors.toSet()))
+                        .toList())
                 .kpIndex(EarthGbCme.KpIndexes.builder()
                         .kp18(simulation.getKp_18())
                         .kp90(simulation.getKp_90())
@@ -54,28 +53,28 @@ public final class CmeMapper {
                 .build();
     }
 
-    private static Set<EarthGbCme.Impact> mapImpacts(WsaEnlil simulation) {
+    private static List<EarthGbCme.Impact> mapImpacts(WsaEnlil simulation) {
         if (simulation.getImpactList() == null) {
             return null;
         }
         return simulation.getImpactList().stream()
-                .map(CmeMapper::mapImpact)
-                .collect(Collectors.toSet());
+                .map(DonkiMapper::mapImpact)
+                .toList();
     }
 
-    private static Set<String> mapLinkedEvents(Cme cme) {
+    private static List<String> mapLinkedEvents(Cme cme) {
         if (cme.getLinkedEvents() == null) {
             return null;
         }
         return cme.getLinkedEvents().stream()
                 .map(Cme.Event::getActivityID)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     private static Cme.CmeAnalyze getMostRecentCmeAnalyze(Cme cme) {
         return cme.getCmeAnalyses().stream()
                 .max(Comparator.comparing(a -> ZonedDateTime.parse(a.getTime21_5())))
-                .orElseThrow(() -> new CmeMapperException("Missing CME analyze"));
+                .orElseThrow(() -> new DonkiMapperException("Missing CME analyze"));
     }
 
     private static WsaEnlil getMostRecentSimulation(Cme cme) {
@@ -84,7 +83,7 @@ public final class CmeMapper {
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .max(Comparator.comparing(sim -> ZonedDateTime.parse(sim.getModelCompletionTime())))
-                .orElseThrow(() -> new CmeMapperException("Missing WSA-ENLIL simulation"));
+                .orElseThrow(() -> new DonkiMapperException("Missing WSA-ENLIL simulation"));
     }
 
     private static EarthGbCme.Impact mapImpact(WsaEnlil.Impact impact) {

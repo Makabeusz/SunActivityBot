@@ -1,7 +1,8 @@
 package com.sojka.sunactivity.donki;
 
-import com.sojka.sunactivity.donki.dto.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.donki.http.DonkiHttpClient;
+import com.sojka.sunactivity.donki.repository.EarthGbCmeRepository;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.assertj.core.api.Condition;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class DonkiServiceIntegrationTest {
 
@@ -35,7 +37,7 @@ class DonkiServiceIntegrationTest {
     @BeforeEach
     void initialize() {
         DonkiHttpClient http = new DonkiHttpClient(server.url("").toString());
-        donkiService = new DonkiService(http);
+        donkiService = new DonkiService(http, mock(EarthGbCmeRepository.class));
     }
 
     @Test
@@ -44,7 +46,7 @@ class DonkiServiceIntegrationTest {
                 .setBody("[" + MockCme.getRichCmeString() + "]")
                 .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE));
 
-        Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getYesterdayEarthGbCmes();
+        Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getAndPersistYesterdayEarthGbCmes();
 
         assertThat(yesterdayEarthGbCmes)
                 .singleElement()
