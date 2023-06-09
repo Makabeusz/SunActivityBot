@@ -5,8 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.net.URL;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
@@ -24,9 +23,9 @@ public class WsaEnlil {
     private Integer kp_135;
     private Integer kp_180;
     private Boolean isEarthGB;
-    private URL link;
-    private Set<Impact> impactList;
-    private Set<String> cmeIDs;
+    private String link;
+    private List<Impact> impactList;
+    private List<String> cmeIDs;
 
     @Data
     public static final class Impact {

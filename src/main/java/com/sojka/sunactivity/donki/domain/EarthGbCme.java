@@ -1,13 +1,12 @@
-package com.sojka.sunactivity.donki.dto;
+package com.sojka.sunactivity.donki.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.net.URL;
 import java.time.ZonedDateTime;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Coronal Mass Ejection that make glance blow on earth with embedded inside,
@@ -24,13 +23,13 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     private Time time;
     private String sourceLocation;
     private Integer activeRegion;
-    private URL cmeUrl;
-    private URL simulationUrl;
+    private String cmeUrl;
+    private String simulationUrl;
     private String note;
-    private Set<String> instruments;
+    private List<String> instruments;
     private KpIndexes kpIndex;
-    private Set<String> linkedEvents;
-    private Set<Impact> impacts;
+    private List<String> linkedEvents;
+    private List<Impact> impacts;
     private Analyze analyze;
 
     @Override
@@ -66,7 +65,7 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
         private Boolean isMostAccurate;
         private String note;
         private Integer levelOfData;
-        private URL url;
+        private String url;
     }
 
     @Data
