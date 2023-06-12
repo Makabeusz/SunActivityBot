@@ -5,7 +5,6 @@ import com.sojka.sunactivity.donki.http.DonkiHttpClient;
 import com.sojka.sunactivity.donki.repository.EarthGbCmeRepository;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,11 +45,22 @@ class DonkiServiceIntegrationTest {
         server.enqueue(new MockResponse()
                 .setBody("[" + MockCme.getRichCmeString() + "]")
                 .setHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE));
+        server.enqueue(new MockResponse()
+                .setBody(MockCme.getHtmlWithAnimations())
+                .setHeader("Content-Type", "text/html;charset=ISO-8859-1"));
+        EarthGbCme.Time correctTimes = EarthGbCme.Time.builder()
+                .startTime("2023-04-18T23:48Z")
+                .arrivalTime("2023-04-23T19:25Z")
+                .duration(27.1F)
+                .simulationTime("2023-04-21T20:31Z")
+                .analysisTime("2023-04-21T21:29Z")
+                .build();
 
         Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getAndPersistYesterdayEarthGbCmes();
 
         assertThat(yesterdayEarthGbCmes)
                 .singleElement()
-                .has(new Condition<>(s -> s.getId().equals("2023-04-18T23:48:00-CME-001"), "correct ID"));
+                .hasFieldOrPropertyWithValue("id", "2023-04-18T23:48:00-CME-001")
+                .hasFieldOrPropertyWithValue("time", correctTimes);
     }
 }
