@@ -36,7 +36,8 @@ class DonkiServiceIntegrationTest {
 
     @BeforeEach
     void initialize() {
-        DonkiHttpClient http = new DonkiHttpClient(server.url("").toString());
+        String serverUrl = server.url("").toString();
+        DonkiHttpClient http = new DonkiHttpClient(serverUrl, serverUrl);
         donkiService = new DonkiService(http, mock(EarthGbCmeRepository.class));
     }
 

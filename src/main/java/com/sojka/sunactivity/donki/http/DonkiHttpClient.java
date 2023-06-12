@@ -1,7 +1,6 @@
 package com.sojka.sunactivity.donki.http;
 
 import com.sojka.sunactivity.donki.domain.Cme;
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +19,19 @@ public class DonkiHttpClient {
     private static final String API_KEY = "DEMO_KEY";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
+    private final String viewUrl;
     private final WebClient apiClient;
     private final WebClient viewClient;
 
-    public DonkiHttpClient(@Value("${nasa.donki.api}") String apiUri) {
+    public DonkiHttpClient(@Value("${nasa.donki.api}") String apiUrl,
+                           @Value("${nasa.donki.view}") String viewUrl) { // https://webtools.ccmc.gsfc.nasa.gov/DONKI/view
         apiClient = WebClient.builder()
-                .baseUrl(apiUri)
+                .baseUrl(apiUrl)
                 .build();
-        viewClient = WebClient.builder().build();
+        this.viewUrl = viewUrl;
+        viewClient = WebClient.builder()
+                .baseUrl(viewUrl)
+                .build();
     }
 
     public ResponseEntity<Set<Cme>> getCMEs(Date startDate, Date endDate) {
@@ -49,14 +53,26 @@ public class DonkiHttpClient {
 
     }
 
-    public ResponseEntity<String> getHtmlWithAnimations(EarthGbCme cme) {
+    public ResponseEntity<String> getViewContent(String url) {
         return viewClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(cme.getSimulationUrl())
-                        .build())
+                .uri(formatDonkiUri(url))
                 .retrieve()
                 .toEntity(String.class)
-                .block();
+                .blockOptional()
+                .orElseThrow(() -> new RuntimeException("Cannot access CME simulations HTML content"));
+    }
+
+    /**
+     * Format given URI to just resource path. Also DONKI api return objects with all the URIs ended with "/-1"
+     * which result in 302 code for further api calls. Removing "-" sign solve the problem.
+     *
+     * @param uri original path with "/-1" ending
+     * @return fixed path
+     */
+    private String formatDonkiUri(String uri) {
+        return uri
+                .substring(viewUrl.length())
+                .replaceAll("/-1$", "/1");
     }
 
 }
