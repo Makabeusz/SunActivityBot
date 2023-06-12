@@ -89,11 +89,11 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
          *   ER-type: Extremely Rare >3000 km/s</pre>
          */
         public enum Score {
-            S_TYPE("S"),
-            C_TYPE("C"),
-            O_TYPE("O"),
-            R_TYPE("R"),
-            ER_TYPE("ER");
+            S("S"),
+            C("C"),
+            O("O"),
+            R("R"),
+            ER("ER");
 
             private final String type;
 
