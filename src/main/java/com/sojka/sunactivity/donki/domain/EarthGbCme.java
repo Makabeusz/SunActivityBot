@@ -1,5 +1,8 @@
 package com.sojka.sunactivity.donki.domain;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,18 +21,24 @@ import java.util.List;
 @Builder
 public class EarthGbCme implements Comparable<EarthGbCme> {
 
+    @NotBlank
     private String id;
     private String catalog;
+    @NotNull
     private Time time;
     private String sourceLocation;
     private Integer activeRegion;
+    @NotBlank
     private String cmeUrl;
+    @NotBlank
     private String simulationUrl;
+    @NotBlank
     private String note;
     private List<String> instruments;
     private KpIndexes kpIndex;
     private List<String> linkedEvents;
     private List<Impact> impacts;
+    @NotNull
     private Analyze analyze;
 
     @Override
@@ -44,7 +53,9 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     @Builder
     public static class Time {
 
+        @NotBlank
         private String startTime;
+        @NotBlank
         private String arrivalTime;
         private Float duration;
         private String simulationTime;
@@ -60,12 +71,41 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
         private Float latitude;
         private Float longitude;
         private Float halfAngle;
+        @Positive
         private Float speed;
-        private String type;
+        private Score score;
         private Boolean isMostAccurate;
+        @NotBlank
         private String note;
         private Integer levelOfData;
         private String url;
+
+        /**
+         * <pre>SCORE CME typification system:
+         *   S-type: CMEs with speeds less than 500 km/s
+         *   C-type: Common 500-999 km/s
+         *   O-type: Occasional 1000-1999 km/s
+         *   R-type: Rare 2000-2999 km/s
+         *   ER-type: Extremely Rare >3000 km/s</pre>
+         */
+        public enum Score {
+            S_TYPE("S"),
+            C_TYPE("C"),
+            O_TYPE("O"),
+            R_TYPE("R"),
+            ER_TYPE("ER");
+
+            private final String type;
+
+            Score(String type) {
+                this.type = type;
+            }
+
+            @Override
+            public String toString() {
+                return this.type;
+            }
+        }
     }
 
     @Data

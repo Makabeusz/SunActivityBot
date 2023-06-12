@@ -1,6 +1,9 @@
 package com.sojka.sunactivity.donki.mapper;
 
 import com.sojka.sunactivity.donki.domain.Cme;
+import com.sojka.sunactivity.donki.domain.Cme.CmeAnalyze;
+import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze;
+import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze.Score;
 import com.sojka.sunactivity.donki.domain.WsaEnlil;
 import com.sojka.sunactivity.donki.domain.EarthGbCme;
 
@@ -21,7 +24,7 @@ public final class DonkiMapper {
             throw new DonkiMapperException("Given CME will not deliver glancing blow to Earth");
         }
         WsaEnlil simulation = getMostRecentSimulation(cme);
-        Cme.CmeAnalyze analyze = getMostRecentCmeAnalyze(cme);
+        CmeAnalyze analyze = getMostRecentCmeAnalyze(cme);
 
         return EarthGbCme.builder()
                 .id(cme.getActivityID())
@@ -71,7 +74,7 @@ public final class DonkiMapper {
                 .toList();
     }
 
-    private static Cme.CmeAnalyze getMostRecentCmeAnalyze(Cme cme) {
+    private static CmeAnalyze getMostRecentCmeAnalyze(Cme cme) {
         return cme.getCmeAnalyses().stream()
                 .max(Comparator.comparing(a -> ZonedDateTime.parse(a.getTime21_5())))
                 .orElseThrow(() -> new DonkiMapperException("Missing CME analyze"));
@@ -79,7 +82,7 @@ public final class DonkiMapper {
 
     private static WsaEnlil getMostRecentSimulation(Cme cme) {
         return cme.getCmeAnalyses().stream()
-                .map(Cme.CmeAnalyze::getEnlilList)
+                .map(CmeAnalyze::getEnlilList)
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
                 .max(Comparator.comparing(sim -> ZonedDateTime.parse(sim.getModelCompletionTime())))
@@ -94,13 +97,13 @@ public final class DonkiMapper {
                 .build();
     }
 
-    private static EarthGbCme.Analyze mapAnalyze(Cme.CmeAnalyze analyze) {
-        return EarthGbCme.Analyze.builder()
+    private static Analyze mapAnalyze(CmeAnalyze analyze) {
+        return Analyze.builder()
                 .latitude(analyze.getLatitude())
                 .longitude(analyze.getLongitude())
                 .halfAngle(analyze.getHalfAngle())
                 .speed(analyze.getSpeed())
-                .type(analyze.getType())
+                .score(Score.valueOf(analyze.getType()))
                 .isMostAccurate(analyze.getIsMostAccurate())
                 .note(analyze.getNote())
                 .levelOfData(analyze.getLevelOfData())

@@ -5,6 +5,7 @@ import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.donki.http.DonkiHttpClient;
 import com.sojka.sunactivity.donki.mapper.DonkiMapper;
 import com.sojka.sunactivity.donki.repository.EarthGbCmeRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class DonkiService {
 
     public Set<EarthGbCme> getAndPersistYesterdayEarthGbCmes() {
         Date yesterday = new Date(Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli());
-        var cmes = Objects.requireNonNull(http
+        @Valid Set<EarthGbCme> cmes = Objects.requireNonNull(http
                         .getCMEs(yesterday, yesterday)
                         .getBody()).stream()
                 .filter(Cme::willDeliverEarthGlancingBlow)
