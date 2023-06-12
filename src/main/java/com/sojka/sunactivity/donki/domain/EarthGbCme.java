@@ -40,6 +40,8 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     private List<Impact> impacts;
     @NotNull
     private Analyze analyze;
+    private String animationDensity;
+    private String animationVelocity;
 
     @Override
     public int compareTo(EarthGbCme o) {
