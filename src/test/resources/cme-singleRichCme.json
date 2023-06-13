@@ -102,9 +102,14 @@
               "arrivalTime": "2023-04-24T22:44Z"
             },
             {
-              "isGlancingBlow": false,
+              "isGlancingBlow": true,
               "location": "STEREO A",
               "arrivalTime": "2023-04-23T18:24Z"
+            },
+            {
+              "isGlancingBlow": true,
+              "location": "Mars",
+              "arrivalTime": "2023-05-20T06:00Z"
             }
           ],
           "cmeIDs": [
