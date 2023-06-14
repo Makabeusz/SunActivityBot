@@ -75,6 +75,7 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
         private Float halfAngle;
         @Positive
         private Float speed;
+        @NotNull
         private Score score;
         private Boolean isMostAccurate;
         @NotBlank

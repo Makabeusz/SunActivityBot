@@ -22,7 +22,12 @@ public class FacebookPost implements SocialMediaPost {
     }
 
     @Override
-    public String getContent() {
+    public String getImage() {
+        return image;
+    }
+
+    @Override
+    public String toString() {
         return title
                 .concat(subtitle)
                 .concat(accuracy)
@@ -30,16 +35,6 @@ public class FacebookPost implements SocialMediaPost {
                 .concat(note)
                 .concat(analyze)
                 .trim();
-    }
-
-    @Override
-    public String getImage() {
-        return image;
-    }
-
-    @Override
-    public String toString() {
-        return title + subtitle + accuracy + impacts + note + analyze;
     }
 
 }

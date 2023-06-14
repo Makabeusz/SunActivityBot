@@ -7,6 +7,7 @@ import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,23 +19,63 @@ public class PostCreator {
             According to the simulations it will deliver glancing blow to the Earth at %s reaching the \
             speed of %d km/s.%s
             """;
-
-    private static final String ACCURACY = "The analyze is %s\n\n";
+    private static final String DURATION_END_TIME_BASE = " The CME will be affecting earth up to %s.";
+    private static final String ACCURACY_BASE = "The analyze is %s\n\n";
+    private static final String NASA_NOTE_BASE = "NASA scientist description:\n%s\n\n";
 
     public static SocialMediaPost createFacebookPost(EarthGbCme cme) {
-        return new FacebookPost(createTitle(cme), createSubtitle(cme), cme.getAnimationDensity(), createAccuracy(cme),
+        Objects.requireNonNull(cme);
+        String image = cme.getAnimationDensity() == null ? "": cme.getAnimationDensity();
+        return new FacebookPost(createTitle(cme), createSubtitle(cme), image, createAccuracyHeading(cme),
                 createImpacts(cme), createNote(cme), createAnalyze(cme));
     }
 
-    static String createAccuracy(EarthGbCme cme) {
-        return String.format(ACCURACY, cme.getAnalyze().getIsMostAccurate()
-                ? "most accurate!"
-                : "not most accurate.");
+    static String createTitle(EarthGbCme cme) {
+        String level;
+        switch (cme.getAnalyze().getScore()) {
+            case S, C -> level = "information";
+            case O -> level = "alert";
+            case R -> level = "red alert!";
+            case ER -> level = "danger!";
+            default -> throw new RuntimeException("Unrecognizable SCORE");
+        }
+        return String.format(TITLE_BASE, cme.getAnalyze().getScore(), level);
+    }
+
+    static String createSubtitle(EarthGbCme cme) {
+        EarthGbCme.Time time = cme.getTime();
+        String region = "";
+        if (cme.getActiveRegion() != null) region = " in active region " + cme.getActiveRegion();
+        return String.format(SUBTITLE_BASE,
+                time.getStartTime(),
+                region,
+                time.getArrivalTime(),
+                cme.getAnalyze().getSpeed().intValue(),
+                createDurationEndTimeHeadings(cme));
+    }
+
+    static String createDurationEndTimeHeadings(EarthGbCme cme) {
+        if (cme.getTime().getDuration() == null) return "";
+
+        float duration = cme.getTime().getDuration();
+        int minutes = (int) ((duration * 60) % 60);
+        int hours = (int) duration;
+        return String.format(DURATION_END_TIME_BASE,
+                ZonedDateTime.parse(cme.getTime().getArrivalTime())
+                .plusHours(hours)
+                .plusMinutes(minutes));
+    }
+
+    static String createAccuracyHeading(EarthGbCme cme) {
+        Boolean accuracy = cme.getAnalyze().getIsMostAccurate();
+        return String.format(ACCURACY_BASE, accuracy == null || !accuracy
+                ? "not most accurate."
+                : "most accurate!");
     }
 
     static String createImpacts(EarthGbCme cme) {
         List<EarthGbCme.Impact> impacts = cme.getImpacts();
-        if (impacts.isEmpty()) {
+        if (impacts == null || impacts.isEmpty()) {
             return "";
         }
 
@@ -82,7 +123,10 @@ public class PostCreator {
     }
 
     static String createNote(EarthGbCme cme) {
-        return "NASA scientist description:\n" + cme.getNote() + "\n\n";
+        if (cme.getNote() == null || cme.getNote().isBlank()) {
+            return "";
+        }
+        return String.format(NASA_NOTE_BASE, cme.getNote());
     }
 
     static String createAnalyze(EarthGbCme cme) {
@@ -91,81 +135,48 @@ public class PostCreator {
 
         int initialSize = sb.length();
 
-        Optional.ofNullable(cme.getAnalyze().getLatitude())
-                .ifPresent(latitude -> sb
-                        .append("Latitude: ")
-                        .append(latitude)
-                        .append("\n"));
-        Optional.ofNullable(cme.getAnalyze().getLongitude())
-                .ifPresent(longitude -> sb
-                        .append("Longitude: ")
-                        .append(longitude)
-                        .append("\n"));
-        Optional.ofNullable(cme.getAnalyze().getHalfAngle())
-                .ifPresent(angle -> sb
-                        .append("Source location: ")
-                        .append(angle)
-                        .append("\n"));
-        Optional.ofNullable(cme.getKpIndex().getKp18())
-                .ifPresent(index -> sb
-                        .append("KP index 18°: ")
-                        .append(index)
-                        .append("\n"));
-        Optional.ofNullable(cme.getKpIndex().getKp90())
-                .ifPresent(index -> sb
-                        .append("KP index 90°: ")
-                        .append(index)
-                        .append("\n"));
-        Optional.ofNullable(cme.getKpIndex().getKp135())
-                .ifPresent(index -> sb
-                        .append("KP index 135°: ")
-                        .append(index)
-                        .append("\n"));
-        Optional.ofNullable(cme.getKpIndex().getKp180())
-                .ifPresent(index -> sb
-                        .append("KP index 180°: ")
-                        .append(index)
-                        .append("\n"));
-
+        if (cme.getAnalyze() != null) {
+            Optional.ofNullable(cme.getAnalyze().getLatitude())
+                    .ifPresent(latitude -> sb
+                            .append("Latitude: ")
+                            .append(latitude)
+                            .append("\n"));
+            Optional.ofNullable(cme.getAnalyze().getLongitude())
+                    .ifPresent(longitude -> sb
+                            .append("Longitude: ")
+                            .append(longitude)
+                            .append("\n"));
+            Optional.ofNullable(cme.getAnalyze().getHalfAngle())
+                    .ifPresent(angle -> sb
+                            .append("Source location: ")
+                            .append(angle)
+                            .append("\n"));
+        }
+        if (cme.getKpIndex() != null) {
+            Optional.ofNullable(cme.getKpIndex().getKp18())
+                    .ifPresent(index -> sb
+                            .append("KP index 18°: ")
+                            .append(index)
+                            .append("\n"));
+            Optional.ofNullable(cme.getKpIndex().getKp90())
+                    .ifPresent(index -> sb
+                            .append("KP index 90°: ")
+                            .append(index)
+                            .append("\n"));
+            Optional.ofNullable(cme.getKpIndex().getKp135())
+                    .ifPresent(index -> sb
+                            .append("KP index 135°: ")
+                            .append(index)
+                            .append("\n"));
+            Optional.ofNullable(cme.getKpIndex().getKp180())
+                    .ifPresent(index -> sb
+                            .append("KP index 180°: ")
+                            .append(index)
+                            .append("\n"));
+        }
         if (sb.length() == initialSize) {
             return "";
         }
         return sb.toString();
-    }
-
-    static String createTitle(EarthGbCme cme) {
-        String level;
-        switch (cme.getAnalyze().getScore()) {
-            case S, C -> level = "information";
-            case O -> level = "alert";
-            case R -> level = "red alert!";
-            case ER -> level = "danger!";
-            default -> throw new RuntimeException("Unrecognizable SCORE");
-        }
-        return String.format(TITLE_BASE, cme.getAnalyze().getScore(), level);
-    }
-
-    static String createSubtitle(EarthGbCme cme) {
-        EarthGbCme.Time time = cme.getTime();
-        String region = "";
-        if (cme.getActiveRegion() != null) region = " in active region " + cme.getActiveRegion();
-        return String.format(SUBTITLE_BASE,
-                time.getStartTime(),
-                region,
-                time.getArrivalTime(),
-                cme.getAnalyze().getSpeed().intValue(),
-                " The CME will be affecting earth up to " + calculateDurationEndTime(cme) + ".");
-    }
-
-    static String calculateDurationEndTime(EarthGbCme cme) {
-        if (cme.getTime().getDuration() == null) return "";
-
-        float duration = cme.getTime().getDuration();
-        int minutes = (int) ((duration * 60) % 60);
-        int hours = (int) duration;
-        return ZonedDateTime.parse(cme.getTime().getArrivalTime())
-                .plusHours(hours)
-                .plusMinutes(minutes)
-                .toString();
     }
 }
