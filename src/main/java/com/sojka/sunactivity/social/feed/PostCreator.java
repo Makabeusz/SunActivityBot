@@ -161,7 +161,7 @@ public class PostCreator {
                             .append("\n"));
             Optional.ofNullable(cme.getAnalyze().getHalfAngle())
                     .ifPresent(angle -> sb
-                            .append("Source location: ")
+                            .append("Half-angle: ")
                             .append(angle)
                             .append("\n"));
         }
