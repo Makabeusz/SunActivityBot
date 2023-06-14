@@ -24,7 +24,7 @@ public class DonkiHttpClient {
     private final WebClient viewClient;
 
     public DonkiHttpClient(@Value("${nasa.donki.api}") String apiUrl,
-                           @Value("${nasa.donki.view}") String viewUrl) { // https://webtools.ccmc.gsfc.nasa.gov/DONKI/view
+                           @Value("${nasa.donki.view}") String viewUrl) {
         apiClient = WebClient.builder()
                 .baseUrl(apiUrl)
                 .build();
