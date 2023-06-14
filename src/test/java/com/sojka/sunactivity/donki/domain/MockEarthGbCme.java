@@ -1,22 +1,7 @@
 package com.sojka.sunactivity.donki.domain;
 
-import java.util.List;
-
 public final class MockEarthGbCme {
 
-    //    private static final EarthGbCme.Impact mars = EarthGbCme.Impact.builder()
-//            .arrivalTime("2023-05-04T18:25Z")
-//            .isGlancingBlow(true)
-//            .location("Mars")
-//            .build();
-//    private static final EarthGbCme.Impact lascoc2 = EarthGbCme.Impact.builder()
-//            .arrivalTime("2023-05-04T19:26Z")
-//            .isGlancingBlow(false)
-//            .location("SOHO: LASCO/C2")
-//            .build();
-//    public static final EarthGbCme e = EarthGbCme.builder()
-//            .impacts(List.of(lascoc2, mars))
-//            .build();
     public static EarthGbCme minimal() {
         return EarthGbCme.builder()
                 .analyze(EarthGbCme.Analyze.builder()
@@ -29,6 +14,30 @@ public final class MockEarthGbCme {
                         .arrivalTime("2023-06-14T00:25Z")
                         .build())
                 .kpIndex(EarthGbCme.KpIndexes.builder().build())
+                .build();
+    }
+
+    public static EarthGbCme.Impact mars() {
+        return EarthGbCme.Impact.builder()
+                .arrivalTime("2023-05-04T18:25Z")
+                .isGlancingBlow(true)
+                .location("Mars")
+                .build();
+    }
+
+    public static EarthGbCme.Impact lascoC2() {
+        return EarthGbCme.Impact.builder()
+                .arrivalTime("2023-05-04T19:26Z")
+                .isGlancingBlow(false)
+                .location("SOHO: LASCO/C2")
+                .build();
+    }
+
+    public static EarthGbCme.Impact lucy() {
+        return EarthGbCme.Impact.builder()
+                .arrivalTime("2023-05-05T00:26Z")
+                .isGlancingBlow(true)
+                .location("Lucy")
                 .build();
     }
 }

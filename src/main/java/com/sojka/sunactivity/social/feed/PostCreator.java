@@ -27,7 +27,7 @@ public class PostCreator {
         Objects.requireNonNull(cme);
         String image = cme.getAnimationDensity() == null ? "": cme.getAnimationDensity();
         return new FacebookPost(createTitle(cme), createSubtitle(cme), image, createAccuracyHeading(cme),
-                createImpacts(cme), createNote(cme), createAnalyze(cme));
+                createImpactsHeading(cme), createNoteHeading(cme), createAnalyzeHeading(cme));
     }
 
     static String createTitle(EarthGbCme cme) {
@@ -51,10 +51,10 @@ public class PostCreator {
                 region,
                 time.getArrivalTime(),
                 cme.getAnalyze().getSpeed().intValue(),
-                createDurationEndTimeHeadings(cme));
+                createDurationEndTimeHeading(cme));
     }
 
-    static String createDurationEndTimeHeadings(EarthGbCme cme) {
+    static String createDurationEndTimeHeading(EarthGbCme cme) {
         if (cme.getTime().getDuration() == null) return "";
 
         float duration = cme.getTime().getDuration();
@@ -73,7 +73,7 @@ public class PostCreator {
                 : "most accurate!");
     }
 
-    static String createImpacts(EarthGbCme cme) {
+    static String createImpactsHeading(EarthGbCme cme) {
         List<EarthGbCme.Impact> impacts = cme.getImpacts();
         if (impacts == null || impacts.isEmpty()) {
             return "";
@@ -88,7 +88,12 @@ public class PostCreator {
                 .collect(Collectors.toCollection(LinkedList::new));
 
         boolean isMars = marsFirstSorted.getFirst().getLocation().equalsIgnoreCase("Mars");
-        boolean plural = isMars && marsFirstSorted.size() > 2;
+        boolean plural;
+        if (isMars) {
+            plural = marsFirstSorted.size() > 2;
+        } else {
+            plural = marsFirstSorted.size() > 1;
+        }
 
         StringBuilder sb = new StringBuilder("Ejected sun particles will reach ");
 
@@ -100,11 +105,19 @@ public class PostCreator {
             } else {
                 sb.append(".\n");
             }
+            if (marsFirstSorted.size() > 1) {
+                sb.append("Other ");
+            } else {
+                return sb
+                        .append("\n")
+                        .toString();
+            }
         }
 
-        sb.append("Other NASA instrument");
+        sb.append("NASA instrument");
         if (plural) sb.append("s");
-        sb.append(" hit by sun particles:\n");
+        if (isMars) sb.append(" hit by sun particles");
+        sb.append(":\n");
 
         for (EarthGbCme.Impact impact : marsFirstSorted) {
             sb.append("- ")
@@ -122,14 +135,14 @@ public class PostCreator {
                 .toString();
     }
 
-    static String createNote(EarthGbCme cme) {
+    static String createNoteHeading(EarthGbCme cme) {
         if (cme.getNote() == null || cme.getNote().isBlank()) {
             return "";
         }
         return String.format(NASA_NOTE_BASE, cme.getNote());
     }
 
-    static String createAnalyze(EarthGbCme cme) {
+    static String createAnalyzeHeading(EarthGbCme cme) {
         StringBuilder sb = new StringBuilder();
         sb.append("Analyze:\n");
 
