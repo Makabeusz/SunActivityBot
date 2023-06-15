@@ -9,6 +9,7 @@ public class FacebookPost implements SocialMediaPost {
     private final String impacts;
     private final String note;
     private final String analyze;
+    private String id;
 
     public FacebookPost(String title, String subtitle, String image,
                         String accuracy, String impacts, String note, String analyze) {
@@ -37,4 +38,13 @@ public class FacebookPost implements SocialMediaPost {
                 .trim();
     }
 
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
 }

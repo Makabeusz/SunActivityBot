@@ -38,7 +38,7 @@ public class FacebookHttpClient implements SocialHttpClient {
                 .toEntity(String.class)
                 .doOnError(e -> {
                     log.error(e.toString());
-                    log.debug("Ping Facebook result: " + ping());
+                    log.debug("Try to ping facebook: " + ping());
                 })
                 .block();
     }

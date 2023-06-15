@@ -4,22 +4,20 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
 import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-@Repository
 @Slf4j
+@Repository
+@RequiredArgsConstructor
 public class EarthGbCmeRepository {
 
     private final Firestore firestore;
     private static final String EARTH_GB_CME_COLLECTION = "EarthGbCme";
-
-    public EarthGbCmeRepository(Firestore firestore) {
-        this.firestore = firestore;
-    }
 
     public Optional<EarthGbCme> saveEarthGbCme(EarthGbCme cme) {
         try {

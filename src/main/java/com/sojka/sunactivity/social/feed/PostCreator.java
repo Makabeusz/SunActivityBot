@@ -23,7 +23,7 @@ public class PostCreator {
     private static final String ACCURACY_BASE = "The analyze is %s\n\n";
     private static final String NASA_NOTE_BASE = "NASA scientist description:\n%s\n\n";
 
-    public static SocialMediaPost createFacebookPost(EarthGbCme cme) {
+    public static synchronized SocialMediaPost createFacebookPost(EarthGbCme cme) {
         Objects.requireNonNull(cme);
         String image = cme.getAnimationDensity() == null ? "": cme.getAnimationDensity();
         return new FacebookPost(createTitle(cme), createSubtitle(cme), image, createAccuracyHeading(cme),
