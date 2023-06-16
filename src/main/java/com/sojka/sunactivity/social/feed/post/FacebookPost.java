@@ -1,5 +1,12 @@
 package com.sojka.sunactivity.social.feed.post;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+import java.util.Objects;
+
+@Getter
+@EqualsAndHashCode
 public class FacebookPost implements SocialMediaPost {
 
     private final String title;
@@ -9,38 +16,30 @@ public class FacebookPost implements SocialMediaPost {
     private final String impacts;
     private final String note;
     private final String analyze;
+    private static final String paragraphSeparator = "\n\n";
     private String id;
 
     public FacebookPost(String title, String subtitle, String image,
                         String accuracy, String impacts, String note, String analyze) {
-        this.title = title;
-        this.subtitle = subtitle;
-        this.image = image;
-        this.accuracy = accuracy;
-        this.impacts = impacts;
-        this.note = note;
-        this.analyze = analyze;
-    }
-
-    @Override
-    public String getImage() {
-        return image;
+        this.title = Objects.requireNonNull(title);
+        this.subtitle = Objects.requireNonNull(subtitle);
+        this.image = Objects.requireNonNull(image);
+        this.accuracy = Objects.requireNonNull(accuracy);
+        this.impacts = Objects.requireNonNull(impacts);
+        this.note = Objects.requireNonNull(note);
+        this.analyze = Objects.requireNonNull(analyze);
     }
 
     @Override
     public String toString() {
-        return title
-                .concat(subtitle)
-                .concat(accuracy)
-                .concat(impacts)
-                .concat(note)
-                .concat(analyze)
+        StringBuilder sb = new StringBuilder(title).append(paragraphSeparator)
+                .append(subtitle).append(paragraphSeparator);
+        if (!impacts.isEmpty()) sb.append(impacts).append(paragraphSeparator);
+        if (!note.isEmpty()) sb.append(note).append(paragraphSeparator);
+        if (!analyze.isEmpty()) sb.append(analyze).append(accuracy);
+        return sb
+                .toString()
                 .trim();
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override

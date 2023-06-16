@@ -22,11 +22,10 @@ public class FacebookRepository implements SocialMediaRepository {
     @Override
     public Optional<SocialMediaPost> savePost(SocialMediaPost post) {
         try {
-            var writeResult = firestore.collection(FACEBOOK_POST_COLLECTION)
+            firestore.collection(FACEBOOK_POST_COLLECTION)
                     .document(post.getId())
                     .set(post)
                     .get();
-            log.info(post.getId() + " successfully persisted with time: " + writeResult.getUpdateTime());
             return getPost(post.getId());
         } catch (ExecutionException | InterruptedException e) {
             log.error(e.toString());

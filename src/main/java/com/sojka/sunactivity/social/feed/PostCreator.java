@@ -13,19 +13,17 @@ import java.util.stream.Collectors;
 
 public class PostCreator {
 
-    private static final String TITLE_BASE = "%s-type coronal mass ejection %s\n\n";
+    private static final String TITLE_BASE = "%s-type coronal mass ejection %s";
     private static final String SUBTITLE_BASE = """
             NASA sun observatories detected coronal mass ejection started at %s%s.
             According to the simulations it will deliver glancing blow to the Earth at %s reaching the \
-            speed of %d km/s.%s
-            """;
+            speed of %d km/s.%s""";
     private static final String DURATION_END_TIME_BASE = " The CME will be affecting earth up to %s.";
-    private static final String ACCURACY_BASE = "The analyze is %s\n\n";
-    private static final String NASA_NOTE_BASE = "NASA scientist description:\n%s\n\n";
+    private static final String ACCURACY_BASE = "The analyze is %s";
 
     public static synchronized SocialMediaPost createFacebookPost(EarthGbCme cme) {
         Objects.requireNonNull(cme);
-        String image = cme.getAnimationDensity() == null ? "": cme.getAnimationDensity();
+        String image = cme.getAnimationDensity() == null ? "" : cme.getAnimationDensity();
         return new FacebookPost(createTitle(cme), createSubtitle(cme), image, createAccuracyHeading(cme),
                 createImpactsHeading(cme), createNoteHeading(cme), createAnalyzeHeading(cme));
     }
@@ -62,8 +60,8 @@ public class PostCreator {
         int hours = (int) duration;
         return String.format(DURATION_END_TIME_BASE,
                 ZonedDateTime.parse(cme.getTime().getArrivalTime())
-                .plusHours(hours)
-                .plusMinutes(minutes));
+                        .plusHours(hours)
+                        .plusMinutes(minutes));
     }
 
     static String createAccuracyHeading(EarthGbCme cme) {
@@ -81,6 +79,7 @@ public class PostCreator {
 
         LinkedList<EarthGbCme.Impact> marsFirstSorted = impacts.stream()
                 .sorted((i1, i2) -> {
+                    if (i2.getLocation().equalsIgnoreCase("Mars")) return 1;
                     if (i1.getLocation().equalsIgnoreCase("Mars")) return -1;
                     return ZonedDateTime.parse(i1.getArrivalTime())
                             .compareTo(ZonedDateTime.parse(i2.getArrivalTime()));
@@ -131,35 +130,39 @@ public class PostCreator {
         }
 
         return sb
-                .append("\n")
-                .toString();
+                .toString()
+                .trim();
     }
 
     static String createNoteHeading(EarthGbCme cme) {
         if (cme.getNote() == null || cme.getNote().isBlank()) {
             return "";
         }
-        return String.format(NASA_NOTE_BASE, cme.getNote());
+        return cme.getNote();
     }
 
     static String createAnalyzeHeading(EarthGbCme cme) {
         StringBuilder sb = new StringBuilder();
         sb.append("Analyze:\n");
-
         int initialSize = sb.length();
+        EarthGbCme.Analyze analyze = cme.getAnalyze();
 
-        if (cme.getAnalyze() != null) {
-            Optional.ofNullable(cme.getAnalyze().getLatitude())
+        if (analyze != null) {
+            Optional.ofNullable(analyze.getNote())
+                    .ifPresent(note -> sb
+                            .append(analyze.getNote())
+                            .append("\n"));
+            Optional.ofNullable(analyze.getLatitude())
                     .ifPresent(latitude -> sb
                             .append("Latitude: ")
                             .append(latitude)
                             .append("\n"));
-            Optional.ofNullable(cme.getAnalyze().getLongitude())
+            Optional.ofNullable(analyze.getLongitude())
                     .ifPresent(longitude -> sb
                             .append("Longitude: ")
                             .append(longitude)
                             .append("\n"));
-            Optional.ofNullable(cme.getAnalyze().getHalfAngle())
+            Optional.ofNullable(analyze.getHalfAngle())
                     .ifPresent(angle -> sb
                             .append("Half-angle: ")
                             .append(angle)
