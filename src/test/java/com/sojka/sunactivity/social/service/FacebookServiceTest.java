@@ -1,14 +1,22 @@
 package com.sojka.sunactivity.social.service;
 
 import com.sojka.sunactivity.donki.domain.MockEarthGbCme;
+import com.sojka.sunactivity.social.feed.post.FacebookPost;
+import com.sojka.sunactivity.social.feed.post.MockFacebookPost;
+import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 import com.sojka.sunactivity.social.http.FacebookHttpClient;
 import com.sojka.sunactivity.social.repository.FacebookRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class FacebookServiceTest {
 
@@ -17,38 +25,70 @@ class FacebookServiceTest {
     private final FacebookService service = new FacebookService(http, repository);
 
     @Test
-    void preparePosts_() {
-       assertThat(service.preparePosts(List.of(MockEarthGbCme.rich())))
-               .singleElement()
-               .isEqualTo("""
-                       O-type coronal mass ejection alert
-
-                       NASA sun observatories detected coronal mass ejection started at 2023-04-18T23:48Z \
-                       in active region 13283.
-                       According to the simulations it will deliver glancing blow to the Earth at 2023-04-23T19:25Z \
-                       reaching the speed of 1087 km/s. The CME will be affecting earth up to 2023-04-24T22:31Z.
-
-                       Ejected sun particles will reach Mars at 2023-05-20T06:00Z delivering glancing blow \
-                       to the planet!
-                       Other NASA instruments hit by sun particles:
-                       - STEREO A at 2023-04-23T18:24Z
-                       - OSIRIS-REx at 2023-04-24T22:44Z
-
-                       Faint and narrow CME seen to the W in SOHO LASCO C2/C3. Data gap in STEREO-A COR2.
-
-                       Analyze:
-                       Bulk measurement following a brighter leading edge seen within the core structure of \
-                       the halo CME in later frames mostly to the south and east.
-                       Latitude: -14.0
-                       Longitude: 14.0
-                       Half-angle: 45.0
-                       KP index 90°: 6
-                       KP index 135°: 7
-                       KP index 180°: 8
-                       The analyze is not most accurate.""");
+    void preparePosts_richEarthGbCme_correctPost() {
+        assertThat(service.preparePosts(List.of(MockEarthGbCme.rich())))
+                .singleElement()
+                .isEqualTo(MockFacebookPost.rich());
     }
 
     @Test
-    void postToFeed() {
+    void postToFeed_postWithoutImage_idAssigned() {
+        FacebookPost post = MockFacebookPost.firstMinimal();
+        when(http.postToFeed(post)).thenReturn(ResponseEntity.ok("{\"id\":\"Post ID\"}"));
+        FacebookPost postWithId = MockFacebookPost.firstMinimal();
+        postWithId.setId("Post ID");
+        when(repository.savePost(post)).thenReturn(Optional.of(postWithId));
+
+        assertThat(service.postToFeed(post)).contains(postWithId);
+    }
+
+    @Test
+    void postToFeed_postWithImage_postIdAssigned() {
+        SocialMediaPost post = MockFacebookPost.firstMinimal();
+        when(http.postToFeed(post)).thenReturn(
+                ResponseEntity.ok("{\"id\":\"Photo ID\",\"post_id\":\"Post ID\"}")
+        );
+        SocialMediaPost postWithId = MockFacebookPost.firstMinimal();
+        postWithId.setId("Post ID");
+        when(repository.savePost(post)).thenReturn(Optional.of(postWithId));
+
+        assertThat(service.postToFeed(post)).contains(postWithId);
+    }
+
+    @Test
+    void postToFeed_otherSocialMediaPost_throwIllegalArgumentException() {
+        SocialMediaPost otherPost = new SocialMediaPost() {
+            @Override
+            public String getImage() {
+                return null;
+            }
+
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Override
+            public void setId(String id) {
+
+            }
+        };
+
+        assertThatThrownBy(() -> service.postToFeed(otherPost))
+                .isExactlyInstanceOf(IllegalArgumentException.class)
+                .hasMessage("class com.sojka.sunactivity.social.service.FacebookServiceTest$1");
+    }
+
+    @Test
+    void preparePosts_threeEarthGbCmes_sortedByStartTimeAsc() {
+        SocialMediaPost firstPost = MockFacebookPost.firstMinimal();
+        SocialMediaPost secondPost = MockFacebookPost.secondMinimal();
+        SocialMediaPost thirdPost = MockFacebookPost.thirdMinimal();
+
+        LinkedHashSet<SocialMediaPost> posts = service.preparePosts(List.of(MockEarthGbCme.thirdMinimal(),
+                MockEarthGbCme.firstMinimal(), MockEarthGbCme.secondMinimal()));
+        assertThat(posts)
+                .hasSize(3)
+                .containsExactly(firstPost, secondPost, thirdPost);
     }
 }

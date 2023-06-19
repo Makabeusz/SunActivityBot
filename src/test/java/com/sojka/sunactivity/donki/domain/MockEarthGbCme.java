@@ -88,6 +88,7 @@ public final class MockEarthGbCme {
                         .kp180(8)
                         .build())
                 .impacts(List.of(orisisRex(), stereoA(), marsWithGb()))
+                .animationDensity("http://iswa.gsfc.nasa.gov/downloads/20230505_111000_2.0_anim.tim-den.gif")
                 .build();
     }
 

@@ -44,17 +44,25 @@ public class FacebookService implements SocialMediaService {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             try {
-                String id = mapper.readValue(http.postToFeed(toSave).getBody(), PostId.class).id();
-                toSave.setId(id);
+                PostId idResponse = mapper.readValue(http.postToFeed(toSave).getBody(), PostId.class);
+                toSave.setId(idResponse.getCorrectId());
                 return repository.savePost(toSave);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("Response without ID field from successfully post: " + e);
+                throw new RuntimeException(e);
             }
         } else {
             throw new IllegalArgumentException(post.getClass().toString());
         }
     }
 
-    private record PostId(String id) {
+    /**
+     * @param id post ID or image ID if posted with image
+     * @param postId post ID or null if posted without image
+     */
+    private record PostId(String id, String postId) {
+
+        String getCorrectId() {
+            return postId == null ? id : postId;
+        }
     }
 }
