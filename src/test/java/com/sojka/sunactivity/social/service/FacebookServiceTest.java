@@ -9,7 +9,6 @@ import com.sojka.sunactivity.social.repository.FacebookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,7 +84,7 @@ class FacebookServiceTest {
         SocialMediaPost secondPost = MockFacebookPost.secondMinimal();
         SocialMediaPost thirdPost = MockFacebookPost.thirdMinimal();
 
-        LinkedHashSet<SocialMediaPost> posts = service.preparePosts(List.of(MockEarthGbCme.thirdMinimal(),
+        List<SocialMediaPost> posts = service.preparePosts(List.of(MockEarthGbCme.thirdMinimal(),
                 MockEarthGbCme.firstMinimal(), MockEarthGbCme.secondMinimal()));
         assertThat(posts)
                 .hasSize(3)

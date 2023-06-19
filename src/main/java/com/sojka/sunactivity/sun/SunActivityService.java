@@ -25,19 +25,18 @@ public class SunActivityService {
         return donki.getAndPersistYesterdayEarthGbCmes();
     }
 
-    public Set<Set<SocialMediaPost>> preparePosts(Collection<EarthGbCme> cmes) {
-        Set<Set<SocialMediaPost>> posts = new LinkedHashSet<>();
+    public Set<LinkedList<SocialMediaPost>> preparePosts(Collection<EarthGbCme> cmes) {
+        Set<LinkedList<SocialMediaPost>> posts = new LinkedHashSet<>();
         for (SocialMediaService service : services) {
             posts.add(service.preparePosts(cmes));
         }
         return posts;
     }
 
-    public List<SocialMediaPost> postFirst(Collection<SocialMediaPost> posts) {
+    public void postFirst(Collection<SocialMediaPost> posts) {
         var rest = new LinkedList<>(posts);
         SocialMediaPost first = rest.removeFirst();
         chooseAService(first).postToFeed(first);
-        return rest;
     }
 
     private SocialMediaService chooseAService(SocialMediaPost post) {

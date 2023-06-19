@@ -13,10 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,13 +27,11 @@ public class FacebookService implements SocialMediaService {
     private final FacebookRepository repository;
 
     @Override
-    public LinkedHashSet<SocialMediaPost> preparePosts(Collection<EarthGbCme> cmes) {
+    public LinkedList<SocialMediaPost> preparePosts(Collection<EarthGbCme> cmes) {
         return cmes.stream()
-                .sorted(Comparator.comparing(cme -> ZonedDateTime.parse(
-                                cme.getTime().getStartTime()),
-                        Comparator.naturalOrder()))
+                .sorted()
                 .map(PostCreator::createFacebookPost)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
@@ -44,9 +40,11 @@ public class FacebookService implements SocialMediaService {
             ObjectMapper mapper = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             try {
-                PostId idResponse = mapper.readValue(http.postToFeed(toSave).getBody(), PostId.class);
-                toSave.setId(idResponse.getCorrectId());
-                return repository.savePost(toSave);
+                String id = mapper.readValue(http.postToFeed(toSave).getBody(), PostId.class).getCorrectId();
+                toSave.setId(id);
+                var saved = repository.savePost(toSave);
+                log.info("Posted on Facebook with ID = " + id);
+                return saved;
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
