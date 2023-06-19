@@ -27,10 +27,18 @@ public class FacebookHttpClient implements SocialHttpClient {
 
     @Override
     public ResponseEntity<String> postToFeed(SocialMediaPost post) {
+        return schedulePost(post, 0L);
+    }
+
+    @Override
+    public ResponseEntity<String> schedulePost(SocialMediaPost post, long timestamp) {
+        final boolean published = timestamp == 0L;
         return client.post().uri(uriBuilder -> uriBuilder
                         .path("/" + PAGE_ID + "/feed")
                         .queryParam("access_token", ACCESS_TOKEN)
                         .queryParam("url", post.getImage())
+                        .queryParam("published", published)
+                        .queryParam("scheduled_publish_time", timestamp)
                         .build())
                 .bodyValue(new Message(post.toString()))
                 .accept(MediaType.APPLICATION_JSON)

@@ -6,5 +6,6 @@ import org.springframework.http.ResponseEntity;
 public interface SocialHttpClient {
 
     ResponseEntity<String> postToFeed(SocialMediaPost post);
+    ResponseEntity<String> schedulePost(SocialMediaPost post, long timestamp);
     SocialHealth ping();
 }
