@@ -50,7 +50,7 @@ public class DonkiService {
         return cmes;
     }
 
-    public EarthGbCme obtainAnimations(EarthGbCme cme) {
+    private EarthGbCme obtainAnimations(EarthGbCme cme) {
         String html = http.getViewContent(cme.getSimulationUrl()).getBody();
         List<String> animationUrls = Objects.requireNonNull(html).lines()
                 .filter(line -> line.contains("Inner Planets Link = <a href=\""))
