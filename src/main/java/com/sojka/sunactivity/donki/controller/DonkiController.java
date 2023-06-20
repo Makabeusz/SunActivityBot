@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,8 +26,9 @@ public class DonkiController {
     private final DonkiService donki;
 
     @GetMapping(path = "/cme")
-    public Set<EarthGbCmeDto> getEarthCme(@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
-                                          @RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
+    public Set<EarthGbCmeDto> getEarthCme(
+            @RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
         return donki.getEarthGbCmes(from, to).stream()
                 .map(DonkiDtoMapper::toEarthGbCmeDto)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -39,4 +41,22 @@ public class DonkiController {
                 .map(DonkiDtoMapper::toEarthGbCmeDto)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
+
+    @GetMapping(path = "/db/cme")
+    public List<EarthGbCmeDto> getEarthCmeFromDb(
+            @RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+            @RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to) {
+        return donki.getSavedEarthGbCme(from, to).stream()
+                .map(DonkiDtoMapper::toEarthGbCmeDto)
+                .toList();
+    }
+
+    @GetMapping(path = "/db/cme/yesterday")
+    public List<EarthGbCmeDto> getYesterdayEarthCmeFromDb() {
+        Date yesterday = new Date(Instant.now().minus(1, ChronoUnit.DAYS).getEpochSecond());
+        return donki.getSavedEarthGbCme(yesterday, yesterday).stream()
+                .map(DonkiDtoMapper::toEarthGbCmeDto)
+                .toList();
+    }
+
 }

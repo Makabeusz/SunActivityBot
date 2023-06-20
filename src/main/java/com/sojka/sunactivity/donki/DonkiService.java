@@ -50,6 +50,10 @@ public class DonkiService {
         return cmes;
     }
 
+    public List<EarthGbCme> getSavedEarthGbCme(Date from, Date to) {
+        return earthGbCmeRepository.getCmes(from, to);
+    }
+
     private EarthGbCme obtainAnimations(EarthGbCme cme) {
         String html = http.getViewContent(cme.getSimulationUrl()).getBody();
         List<String> animationUrls = Objects.requireNonNull(html).lines()
