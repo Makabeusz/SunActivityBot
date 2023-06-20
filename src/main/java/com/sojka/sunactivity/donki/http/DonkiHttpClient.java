@@ -8,16 +8,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Set;
 
 @Component
 public class DonkiHttpClient {
 
     private static final String API_KEY = "DEMO_KEY";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private final String viewUrl;
     private final WebClient apiClient;
@@ -34,12 +32,12 @@ public class DonkiHttpClient {
                 .build();
     }
 
-    public ResponseEntity<Set<Cme>> getCMEs(Date startDate, Date endDate) {
+    public ResponseEntity<Set<Cme>> getCMEs(LocalDate startDate, LocalDate endDate) {
         var response = apiClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/CME")
-                        .queryParam("startDate", DATE_FORMAT.format(startDate))
-                        .queryParam("endDate", DATE_FORMAT.format(endDate))
+                        .queryParam("startDate", startDate)
+                        .queryParam("endDate", endDate)
                         .queryParam("api_key", API_KEY)
                         .build())
                 .retrieve();

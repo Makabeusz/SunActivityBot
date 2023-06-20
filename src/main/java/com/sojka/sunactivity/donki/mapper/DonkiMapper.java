@@ -1,5 +1,6 @@
 package com.sojka.sunactivity.donki.mapper;
 
+import com.google.cloud.Timestamp;
 import com.sojka.sunactivity.donki.domain.Cme;
 import com.sojka.sunactivity.donki.domain.Cme.CmeAnalyze;
 import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze;
@@ -30,11 +31,11 @@ public final class DonkiMapper {
                 .id(cme.getActivityID())
                 .catalog(cme.getCatalog())
                 .time(EarthGbCme.Time.builder()
-                        .startTime(cme.getStartTime())
-                        .arrivalTime(simulation.getEstimatedShockArrivalTime())
+                        .startTime(Timestamp.parseTimestamp(cme.getStartTime()))
+                        .arrivalTime(Timestamp.parseTimestamp(simulation.getEstimatedShockArrivalTime()))
                         .duration(simulation.getEstimatedDuration())
-                        .simulationTime(simulation.getModelCompletionTime())
-                        .analysisTime(analyze.getTime21_5())
+                        .simulationTime(Timestamp.parseTimestamp(simulation.getModelCompletionTime()))
+                        .analysisTime(Timestamp.parseTimestamp(analyze.getTime21_5()))
                         .build())
                 .sourceLocation(cme.getSourceLocation())
                 .activeRegion(cme.getActiveRegionNum())

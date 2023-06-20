@@ -19,7 +19,7 @@ public final class MockFacebookPost {
                 NASA sun observatories detected coronal mass ejection started at 2023-04-18T23:48Z \
                 in active region 13283.
                 According to the simulations it will deliver glancing blow to the Earth at 2023-04-23T19:25Z \
-                reaching the speed of 1087 km/s. The CME will be affecting earth up to 2023-04-24T22:31Z.""",
+                reaching the speed of 1087 km/s. The CME will be affecting earth up to 2023-04-24T22:25Z.""",
                 "http://iswa.gsfc.nasa.gov/downloads/20230505_111000_2.0_anim.tim-den.gif",
                 "The analyze is not most accurate.", """
                 Ejected sun particles will reach Mars at 2023-05-20T06:00Z delivering glancing blow to the planet!

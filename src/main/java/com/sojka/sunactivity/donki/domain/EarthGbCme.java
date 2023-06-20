@@ -1,5 +1,6 @@
 package com.sojka.sunactivity.donki.domain;
 
+import com.google.cloud.Timestamp;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,7 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -45,8 +45,7 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
 
     @Override
     public int compareTo(EarthGbCme o) {
-        return ZonedDateTime.parse(this.time.getStartTime())
-                .compareTo(ZonedDateTime.parse(o.time.getStartTime()));
+        return this.time.getStartTime().compareTo(o.time.getStartTime());
     }
 
     @Data
@@ -56,12 +55,12 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     public static class Time {
 
         @NotBlank
-        private String startTime;
+        private Timestamp startTime;
         @NotBlank
-        private String arrivalTime;
+        private Timestamp arrivalTime;
         private Float duration;
-        private String simulationTime;
-        private String analysisTime;
+        private Timestamp simulationTime;
+        private Timestamp analysisTime;
     }
 
     @Data

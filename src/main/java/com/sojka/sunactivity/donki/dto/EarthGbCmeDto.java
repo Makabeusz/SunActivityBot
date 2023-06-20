@@ -4,6 +4,7 @@ import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -34,11 +35,11 @@ public class EarthGbCmeDto {
     @Builder
     public static class TimeDto {
 
-        private String startTime;
-        private String arrivalTime;
+        private ZonedDateTime startTime;
+        private ZonedDateTime arrivalTime;
         private Float duration;
-        private String simulationTime;
-        private String analysisTime;
+        private ZonedDateTime simulationTime;
+        private ZonedDateTime analysisTime;
     }
 
     @Data

@@ -4,7 +4,10 @@ import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.social.feed.post.FacebookPost;
 import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -45,9 +48,9 @@ public class PostCreator {
         String region = "";
         if (cme.getActiveRegion() != null) region = " in active region " + cme.getActiveRegion();
         return String.format(SUBTITLE_BASE,
-                time.getStartTime(),
+                ZonedDateTime.parse(time.getStartTime().toString()),
                 region,
-                time.getArrivalTime(),
+                ZonedDateTime.parse(time.getArrivalTime().toString()),
                 cme.getAnalyze().getSpeed().intValue(),
                 createDurationEndTimeHeading(cme));
     }
@@ -56,19 +59,16 @@ public class PostCreator {
         if (cme.getTime().getDuration() == null) return "";
 
         float duration = cme.getTime().getDuration();
-        int minutes = (int) ((duration * 60) % 60);
-        int hours = (int) duration;
-        return String.format(DURATION_END_TIME_BASE,
-                ZonedDateTime.parse(cme.getTime().getArrivalTime())
-                        .plusHours(hours)
-                        .plusMinutes(minutes));
+        int minutes = (int) duration * 60;
+        ZonedDateTime durationEndTime = ZonedDateTime.ofInstant(Instant.ofEpochSecond(cme.getTime().getArrivalTime().getSeconds())
+                .plus(minutes, ChronoUnit.MINUTES), ZoneId.of("Z"));
+        return String.format(DURATION_END_TIME_BASE, durationEndTime);
     }
 
     static String createAccuracyHeading(EarthGbCme cme) {
-        Boolean accuracy = cme.getAnalyze().getIsMostAccurate();
-        return String.format(ACCURACY_BASE, accuracy == null || !accuracy
-                ? "not most accurate."
-                : "most accurate!");
+        boolean accuracy = cme.getAnalyze().getIsMostAccurate();
+        return String.format(ACCURACY_BASE,
+                accuracy ? "most accurate!" : "not most accurate.");
     }
 
     static String createImpactsHeading(EarthGbCme cme) {

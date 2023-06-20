@@ -1,5 +1,7 @@
 package com.sojka.sunactivity.donki.domain;
 
+import com.google.cloud.Timestamp;
+
 import java.util.List;
 
 import static com.sojka.sunactivity.donki.domain.MockEarthGbCme.MockImpacts.marsWithGb;
@@ -16,8 +18,8 @@ public final class MockEarthGbCme {
                         .isMostAccurate(true)
                         .build())
                 .time(EarthGbCme.Time.builder()
-                        .startTime("2023-04-20T06:12Z")
-                        .arrivalTime("2023-04-25T01:28Z")
+                        .startTime(Timestamp.parseTimestamp("2023-04-20T06:12Z"))
+                        .arrivalTime(Timestamp.parseTimestamp("2023-04-25T01:28Z"))
                         .build())
                 .kpIndex(EarthGbCme.KpIndexes.builder().build())
                 .build();
@@ -31,8 +33,8 @@ public final class MockEarthGbCme {
                         .isMostAccurate(false)
                         .build())
                 .time(EarthGbCme.Time.builder()
-                        .startTime("2023-04-20T06:13Z")
-                        .arrivalTime("2023-04-25T01:36Z")
+                        .startTime(Timestamp.parseTimestamp("2023-04-20T06:13Z"))
+                        .arrivalTime(Timestamp.parseTimestamp("2023-04-25T01:36Z"))
                         .build())
                 .kpIndex(EarthGbCme.KpIndexes.builder().build())
                 .build();
@@ -47,8 +49,8 @@ public final class MockEarthGbCme {
                         .isMostAccurate(true)
                         .build())
                 .time(EarthGbCme.Time.builder()
-                        .startTime("2023-04-20T07:09Z")
-                        .arrivalTime("2023-04-25T02:12Z")
+                        .startTime(Timestamp.parseTimestamp("2023-04-20T07:09Z"))
+                        .arrivalTime(Timestamp.parseTimestamp("2023-04-25T02:12Z"))
                         .build())
                 .kpIndex(EarthGbCme.KpIndexes.builder().build())
                 .build();
@@ -59,10 +61,10 @@ public final class MockEarthGbCme {
                 .id("2023-04-18T23:48:00-CME-001")
                 .catalog("M2M_CATALOG")
                 .time(EarthGbCme.Time.builder()
-                        .startTime("2023-04-18T23:48Z")
-                        .arrivalTime("2023-04-23T19:25Z")
-                        .simulationTime("2023-04-21T20:31Z")
-                        .analysisTime("2023-04-21T21:29Z")
+                        .startTime(Timestamp.parseTimestamp("2023-04-18T23:48Z"))
+                        .arrivalTime(Timestamp.parseTimestamp("2023-04-23T19:25Z"))
+                        .simulationTime(Timestamp.parseTimestamp("2023-04-21T20:31Z"))
+                        .analysisTime(Timestamp.parseTimestamp("2023-04-21T21:29Z"))
                         .duration(27.1F)
                         .build())
                 .sourceLocation("S20E90")

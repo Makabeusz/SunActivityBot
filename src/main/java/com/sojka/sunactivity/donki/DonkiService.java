@@ -10,10 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -29,7 +27,7 @@ public class DonkiService {
     private final EarthGbCmeRepository earthGbCmeRepository;
 
     @Valid
-    public Set<EarthGbCme> getEarthGbCmes(Date from, Date to) {
+    public Set<EarthGbCme> getEarthGbCmes(LocalDate from, LocalDate to) {
         var cmes = http.getCMEs(from, to).getBody();
         Objects.requireNonNull(cmes);
         return cmes.stream()
@@ -40,7 +38,7 @@ public class DonkiService {
     }
 
     public Set<EarthGbCme> getAndPersistYesterdayEarthGbCmes() {
-        Date yesterday = new Date(Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli());
+        LocalDate yesterday = LocalDate.now().minusDays(1);
         Set<EarthGbCme> cmes = getEarthGbCmes(yesterday, yesterday);
         if (cmes.isEmpty()) {
             log.info("No coronal mass ejections that will possibly deliver glancing blow to Earth occurred");
@@ -50,7 +48,7 @@ public class DonkiService {
         return cmes;
     }
 
-    public List<EarthGbCme> getSavedEarthGbCme(Date from, Date to) {
+    public List<EarthGbCme> getSavedEarthGbCme(LocalDate from, LocalDate to) {
         return earthGbCmeRepository.getCmes(from, to);
     }
 

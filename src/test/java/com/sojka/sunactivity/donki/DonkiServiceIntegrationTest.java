@@ -1,5 +1,6 @@
 package com.sojka.sunactivity.donki;
 
+import com.google.cloud.Timestamp;
 import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.donki.http.DonkiHttpClient;
 import com.sojka.sunactivity.donki.repository.EarthGbCmeRepository;
@@ -49,11 +50,11 @@ class DonkiServiceIntegrationTest {
                 .setBody(MockCme.getHtmlWithAnimations())
                 .setHeader("Content-Type", "text/html;charset=ISO-8859-1"));
         EarthGbCme.Time correctTimes = EarthGbCme.Time.builder()
-                .startTime("2023-04-18T23:48Z")
-                .arrivalTime("2023-04-23T19:25Z")
+                .startTime(Timestamp.parseTimestamp("2023-04-18T23:48Z"))
+                .arrivalTime(Timestamp.parseTimestamp("2023-04-23T19:25Z"))
                 .duration(27.1F)
-                .simulationTime("2023-04-21T20:31Z")
-                .analysisTime("2023-04-21T21:29Z")
+                .simulationTime(Timestamp.parseTimestamp("2023-04-21T20:31Z"))
+                .analysisTime(Timestamp.parseTimestamp("2023-04-21T21:29Z"))
                 .build();
 
         Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getAndPersistYesterdayEarthGbCmes();

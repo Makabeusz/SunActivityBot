@@ -1,6 +1,7 @@
 package com.sojka.sunactivity.donki.repository;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
@@ -10,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -25,7 +24,6 @@ public class EarthGbCmeRepository {
 
     private final Firestore firestore;
     private static final String EARTH_GB_CME_COLLECTION = "EarthGbCme";
-    private static final DateFormat date = new SimpleDateFormat("yyyy-MM-dd");
 
     public Optional<EarthGbCme> saveEarthGbCme(EarthGbCme cme) {
         try {
@@ -49,11 +47,11 @@ public class EarthGbCmeRepository {
         }
     }
 
-    public List<EarthGbCme> getCmes(Date from, Date to) {
+    public List<EarthGbCme> getCmes(LocalDate from, LocalDate to) {
         try {
             ApiFuture<QuerySnapshot> future = firestore.collection(EARTH_GB_CME_COLLECTION)
-                    .whereGreaterThanOrEqualTo("time.startTime", date.format(from))
-                    .whereLessThanOrEqualTo("time.startTime", date.format(to))
+                    .whereGreaterThanOrEqualTo("time.startTime", toGoogleTimestamp(from))
+                    .whereLessThanOrEqualTo("time.startTime", toGoogleTimestamp(to))
                     .get();
             return future.get().getDocuments().stream()
                     .map(d -> d.toObject(EarthGbCme.class))
@@ -64,6 +62,8 @@ public class EarthGbCmeRepository {
         }
     }
 
-
+    private static Timestamp toGoogleTimestamp(LocalDate date) {
+        return Timestamp.parseTimestamp(date.toString() + "T00:00Z");
+    }
 
 }

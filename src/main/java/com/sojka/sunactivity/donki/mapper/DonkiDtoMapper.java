@@ -11,6 +11,8 @@ import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.ImpactDto;
 import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.KpIndexesDto;
 import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.TimeDto;
 
+import java.time.ZonedDateTime;
+
 public final class DonkiDtoMapper {
 
     private DonkiDtoMapper() {
@@ -50,11 +52,11 @@ public final class DonkiDtoMapper {
 
     private static TimeDto mapTime(Time time) {
         return EarthGbCmeDto.TimeDto.builder()
-                .startTime(time.getStartTime())
-                .arrivalTime(time.getArrivalTime())
+                .startTime(ZonedDateTime.parse(time.getStartTime().toString()))
+                .arrivalTime(ZonedDateTime.parse(time.getArrivalTime().toString()))
                 .duration(time.getDuration())
-                .simulationTime(time.getSimulationTime())
-                .analysisTime(time.getAnalysisTime())
+                .simulationTime(ZonedDateTime.parse(time.getSimulationTime().toString()))
+                .analysisTime(ZonedDateTime.parse(time.getAnalysisTime().toString()))
                 .build();
     }
 
