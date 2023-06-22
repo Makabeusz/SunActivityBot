@@ -54,22 +54,10 @@ class FacebookServiceTest {
     @Test
     void postToFeed_otherSocialMediaPost_throwIllegalArgumentException() {
         SocialMediaPost otherPost = new SocialMediaPost() {
-            @Override
-            public String getImage() {
+            public String getContent() {
                 return null;
-            }
-
-            @Override
-            public String getId() {
-                return null;
-            }
-
-            @Override
-            public void setId(String id) {
-
             }
         };
-
         assertThatThrownBy(() -> service.postToFeed(otherPost))
                 .isExactlyInstanceOf(IllegalArgumentException.class)
                 .hasMessage("class com.sojka.sunactivity.social.service.FacebookServiceTest$1");
@@ -83,6 +71,7 @@ class FacebookServiceTest {
 
         List<SocialMediaPost> posts = service.preparePosts(List.of(MockEarthGbCme.thirdMinimal(),
                 MockEarthGbCme.firstMinimal(), MockEarthGbCme.secondMinimal()));
+
         assertThat(posts)
                 .hasSize(3)
                 .containsExactly(firstPost, secondPost, thirdPost);
