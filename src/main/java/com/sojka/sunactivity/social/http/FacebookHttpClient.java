@@ -4,10 +4,15 @@ import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -26,29 +31,37 @@ public class FacebookHttpClient implements SocialHttpClient {
     }
 
     @Override
-    public ResponseEntity<String> postToFeed(SocialMediaPost post) {
-        return schedulePost(post, 0L);
+    public String postToFeed(SocialMediaPost post) {
+        return postToFeedRequest(Map.of("message", post.toString()))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
     }
 
     @Override
-    public ResponseEntity<String> schedulePost(SocialMediaPost post, long timestamp) {
-        final boolean published = timestamp == 0L;
-        return client.post().uri(uriBuilder -> uriBuilder
-                        .path("/" + PAGE_ID + "/feed")
-                        .queryParam("access_token", ACCESS_TOKEN)
-                        .queryParam("url", post.getImage())
-                        .queryParam("published", published)
-                        .queryParam("scheduled_publish_time", timestamp)
-                        .build())
-                .bodyValue(new Message(post.toString()))
-                .accept(MediaType.APPLICATION_JSON)
+    public String schedulePost(SocialMediaPost post, long timestamp) {
+        long tenMinutesAhead = Instant.now().plus(10, ChronoUnit.MINUTES).getEpochSecond();
+        if (timestamp < tenMinutesAhead) {
+            throw new IllegalArgumentException("timestamp = " + timestamp);
+        }
+        Map<String, Object> fields = Map.of(
+                "message", post.toString(),
+                "published", false,
+                "scheduled_publish_time", timestamp
+        );
+        return postToFeedRequest(fields)
                 .retrieve()
-                .toEntity(String.class)
-                .doOnError(e -> {
-                    log.error(e.toString());
-                    log.debug("Try to ping facebook: " + ping());
-                })
+                .bodyToMono(String.class)
                 .block();
+    }
+
+    private RequestHeadersSpec<? extends RequestHeadersSpec<?>> postToFeedRequest(
+            Map<String, Object> bodyParams) {
+        Map<String, Object> body = new HashMap<>(
+                Map.of("access_token", ACCESS_TOKEN)
+        );
+        body.putAll(bodyParams);
+        return client.post().uri("/" + PAGE_ID + "/feed").bodyValue(body);
     }
 
     @Override
@@ -71,6 +84,5 @@ public class FacebookHttpClient implements SocialHttpClient {
         }
     }
 
-    private record Message(String message) {
-    }
+
 }

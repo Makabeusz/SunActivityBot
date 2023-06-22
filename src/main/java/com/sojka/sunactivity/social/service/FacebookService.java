@@ -45,7 +45,7 @@ public class FacebookService implements SocialMediaService {
     public Optional<SocialMediaPost> postToFeed(SocialMediaPost post) {
         FacebookPost toSave = checkIfFacebookPost(post);
         try {
-            String id = mapper.readValue(http.postToFeed(toSave).getBody(), PostId.class).getCorrectId();
+            String id = mapper.readValue(http.postToFeed(toSave), PostId.class).getCorrectId();
             toSave.setId(id);
             var saved = repository.savePost(toSave);
             log.info("Posted on Facebook with ID = " + id);
@@ -69,8 +69,8 @@ public class FacebookService implements SocialMediaService {
             FacebookPost toSave = checkIfFacebookPost(post);
             plusOneHour.add(Calendar.HOUR_OF_DAY, 1);
             try {
-                String id = mapper.readValue(http.schedulePost(toSave, plusOneHour.getTime().getTime())
-                        .getBody(), PostId.class).getCorrectId();
+                String id = mapper.readValue(http.schedulePost(toSave, plusOneHour.getTime().getTime()),
+                        PostId.class).getCorrectId();
                 toSave.setId(id);
                 savedPosts.add(repository.savePost(toSave).orElseThrow());
                 log.info("Posted on Facebook with ID = " + id);

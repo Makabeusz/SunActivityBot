@@ -7,7 +7,6 @@ import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 import com.sojka.sunactivity.social.http.FacebookHttpClient;
 import com.sojka.sunactivity.social.repository.FacebookRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +32,7 @@ class FacebookServiceTest {
     @Test
     void postToFeed_postWithoutImage_idAssigned() {
         FacebookPost post = MockFacebookPost.firstMinimal();
-        when(http.postToFeed(post)).thenReturn(ResponseEntity.ok("{\"id\":\"Post ID\"}"));
+        when(http.postToFeed(post)).thenReturn("{\"id\":\"Post ID\"}");
         FacebookPost postWithId = MockFacebookPost.firstMinimal();
         postWithId.setId("Post ID");
         when(repository.savePost(post)).thenReturn(Optional.of(postWithId));
@@ -44,9 +43,7 @@ class FacebookServiceTest {
     @Test
     void postToFeed_postWithImage_postIdAssigned() {
         SocialMediaPost post = MockFacebookPost.firstMinimal();
-        when(http.postToFeed(post)).thenReturn(
-                ResponseEntity.ok("{\"id\":\"Photo ID\",\"post_id\":\"Post ID\"}")
-        );
+        when(http.postToFeed(post)).thenReturn("{\"id\":\"Photo ID\",\"post_id\":\"Post ID\"}");
         SocialMediaPost postWithId = MockFacebookPost.firstMinimal();
         postWithId.setId("Post ID");
         when(repository.savePost(post)).thenReturn(Optional.of(postWithId));
