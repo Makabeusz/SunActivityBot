@@ -13,13 +13,12 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SunActivityService {
+public class SunService {
 
     private final DonkiService donki;
     private final List<SocialMediaService> services;
@@ -32,15 +31,11 @@ public class SunActivityService {
         return post(cmes);
     }
 
-    public Optional<SocialMediaPost> post(SocialMediaPost post) {
-        return chooseAService(post).postToFeed(post);
-    }
-
     public Set<Set<SocialMediaPost>> post(Collection<EarthGbCme> cmes) {
         Set<Set<SocialMediaPost>> postedOrScheduled = new LinkedHashSet<>();
-        for (LinkedList<SocialMediaPost> oneServicePosts : preparePosts(cmes)) {
-            var posted = chooseAService(oneServicePosts.peek()).postToFeed(oneServicePosts);
-            postedOrScheduled.add(posted);
+        for (SocialMediaService service : services) {
+            LinkedList<SocialMediaPost> posts = service.preparePosts(cmes);
+            postedOrScheduled.add(service.postToFeed(posts));
         }
         return postedOrScheduled;
     }
