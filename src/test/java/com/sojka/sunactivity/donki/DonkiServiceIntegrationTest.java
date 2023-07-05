@@ -1,6 +1,7 @@
 package com.sojka.sunactivity.donki;
 
 import com.google.cloud.Timestamp;
+import com.sojka.sunactivity.donki.domain.Cme;
 import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.donki.http.DonkiHttpClient;
 import com.sojka.sunactivity.donki.repository.EarthGbCmeRepository;
@@ -11,17 +12,26 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.URI;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class DonkiServiceIntegrationTest {
 
+    private static final String DONKI_KEY = System.getenv("SUN_DONKI_KEY");
+
     private static MockWebServer server;
     private DonkiService donkiService;
+    private final RestTemplate mockedRest = mock(RestTemplate.class);
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -37,7 +47,7 @@ class DonkiServiceIntegrationTest {
     @BeforeEach
     void initialize() {
         String serverUrl = server.url("").toString();
-        DonkiHttpClient http = new DonkiHttpClient(serverUrl, serverUrl);
+        DonkiHttpClient http = new DonkiHttpClient(serverUrl, mockedRest);
         donkiService = new DonkiService(http, mock(EarthGbCmeRepository.class));
     }
 
@@ -56,6 +66,12 @@ class DonkiServiceIntegrationTest {
                 .simulationTime(Timestamp.parseTimestamp("2023-04-21T20:31Z"))
                 .analysisTime(Timestamp.parseTimestamp("2023-04-21T21:29Z"))
                 .build();
+        LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
+        URI getCmesFullUri = URI.create("http://" + server.getHostName() + ":" + server.getPort() + "/CME?api_key="
+                                        + DONKI_KEY + "&startDate=" + yesterday + "&endDate=" + yesterday);
+        when(mockedRest.getForObject(getCmesFullUri, Cme[].class)).thenReturn(new Cme[]{MockCme.getRichCme()});
+        when(mockedRest.getForEntity("https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24725/1",
+                String.class)).thenReturn(ResponseEntity.ok(MockCme.getHtmlWithAnimations()));
 
         Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getAndPersistYesterdayEarthGbCmes();
 

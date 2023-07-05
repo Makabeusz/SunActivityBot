@@ -3,14 +3,20 @@ package com.sojka.sunactivity.social.http;
 import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,71 +24,84 @@ import java.util.Map;
 @Slf4j
 public class FacebookHttpClient implements SocialHttpClient {
 
-    private final WebClient client;
-    private final String PAGE_ID;
+    private final RestTemplate rest;
+    private final String apiUrl;
+    private final String feedUrl;
     private static final String ACCESS_TOKEN = System.getenv("SUN_FACEBOOK_TOKEN");
 
     public FacebookHttpClient(@Value("${social.facebook.api}") String apiUrl,
-                              @Value("${social.facebook.page_id}") String pageId) {
-        client = WebClient.builder()
-                .baseUrl(apiUrl)
-                .build();
-        PAGE_ID = pageId;
+                              @Value("${social.facebook.page_id}") String pageId,
+                              RestTemplate restTemplate) {
+        rest = restTemplate;
+        this.apiUrl = apiUrl;
+        this.feedUrl = apiUrl + "/" + pageId + "/feed";
     }
 
     @Override
     public String postToFeed(SocialMediaPost post) {
-        return postToFeedRequest(Map.of("message", post.toString()))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        HttpEntity<?> request = createRequest(post);
+        try {
+            return rest.postForObject(feedUrl, request, String.class);
+        } catch (RestClientException e) {
+            log.error(e.getMessage());
+            return "";
+        }
     }
 
     @Override
     public String schedulePost(SocialMediaPost post, long timestamp) {
-        long tenMinutesAhead = Instant.now().plus(10, ChronoUnit.MINUTES).getEpochSecond();
+        Instant now = Instant.now();
+        long tenMinutesAhead = now.plus(10, ChronoUnit.MINUTES).getEpochSecond();
         if (timestamp < tenMinutesAhead) {
-            throw new IllegalArgumentException("timestamp = " + timestamp);
+            LocalTime actual = LocalTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneOffset.UTC);
+            throw new IllegalArgumentException("Must schedule the post at least 10 minutes after posting time. "
+                                               + "Posting time: " + LocalTime.ofInstant(now, ZoneOffset.UTC)
+                                               + " Post time: " + actual);
         }
-        Map<String, Object> fields = Map.of(
-                "message", post.toString(),
+        Map<String, Object> params = Map.of(
                 "published", false,
                 "scheduled_publish_time", timestamp
         );
-        return postToFeedRequest(fields)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
-    private RequestHeadersSpec<? extends RequestHeadersSpec<?>> postToFeedRequest(
-            Map<String, Object> bodyParams) {
-        Map<String, Object> body = new HashMap<>(
-                Map.of("access_token", ACCESS_TOKEN)
-        );
-        body.putAll(bodyParams);
-        return client.post().uri("/" + PAGE_ID + "/feed").bodyValue(body);
+        HttpEntity<?> request = createRequest(post, params);
+        return rest.postForObject(feedUrl, request, String.class);
     }
 
     @Override
     public SocialHealth ping() {
+        Map<String, Object> params = Map.of("access_token", ACCESS_TOKEN);
+
+        var uri = UriComponentsBuilder.fromHttpUrl(apiUrl + "/me")
+                .queryParam("access_token", "{access_token}")
+                .build(params);
+
         try {
-            var response = client.get().uri(uriBuilder -> uriBuilder
-                            .path("/me")
-                            .queryParam("access_token", ACCESS_TOKEN)
-                            .build())
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .toEntity(String.class)
-                    .block();
-            if (response == null) {
-                return new SocialHealth(false, "null response");
+            ResponseEntity<String> response = rest.getForEntity(uri, String.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return new SocialHealth(true, response.getBody());
+            } else {
+                return new SocialHealth(false, response.getBody());
             }
-            return new SocialHealth(true, response.getBody());
-        } catch (WebClientResponseException e) {
+        } catch (RestClientException e) {
+            log.error(e.toString());
             return new SocialHealth(false, e.toString());
         }
     }
 
+    private static HttpEntity<?> createRequest(SocialMediaPost post, Map<String, Object> bodyParams) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", post.getContent());
+        body.put("access_token", ACCESS_TOKEN);
+        body.putAll(bodyParams);
+
+        return new HttpEntity<>(body, headers);
+    }
+
+    private static HttpEntity<?> createRequest(SocialMediaPost post) {
+        return createRequest(post, Collections.emptyMap());
+    }
 
 }
