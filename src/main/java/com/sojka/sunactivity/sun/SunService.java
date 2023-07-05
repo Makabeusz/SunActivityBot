@@ -40,26 +40,4 @@ public class SunService {
         return postedOrScheduled;
     }
 
-    private Set<LinkedList<SocialMediaPost>> preparePosts(Collection<EarthGbCme> cmes) {
-        Set<LinkedList<SocialMediaPost>> posts = new LinkedHashSet<>();
-        for (SocialMediaService service : services) {
-            posts.add(service.preparePosts(cmes));
-        }
-        return posts;
-    }
-
-    private SocialMediaService chooseAService(SocialMediaPost post) {
-        String postName = getNameWithoutLastSequence(post, "Post");
-        for (SocialMediaService service : services) {
-            String serviceName = getNameWithoutLastSequence(service, "Service");
-            if (postName.equalsIgnoreCase(serviceName)) return service;
-        }
-        throw new IllegalArgumentException("No implementation of " + post.getClass().getSimpleName());
-    }
-
-    private static String getNameWithoutLastSequence(Object object, String sequence) {
-        String simpleName = object.getClass().getSimpleName();
-        return simpleName.substring(0, simpleName.lastIndexOf(sequence));
-    }
-
 }
