@@ -1,5 +1,6 @@
 package com.sojka.sunactivity.security.user;
 
+import com.google.cloud.firestore.annotation.Exclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @Builder
@@ -19,13 +19,13 @@ import java.util.Objects;
 public class User implements UserDetails {
 
     private String email;
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private String password;
     private Role role;
 
-
     @Override
+    @Exclude
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
@@ -36,43 +36,32 @@ public class User implements UserDetails {
     }
 
     @Override
+    @Exclude
     public String getUsername() {
         return email;
     }
 
     @Override
+    @Exclude
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @Exclude
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @Exclude
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @Exclude
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(email, user.email) &&
-               Objects.equals(firstName, user.firstName) &&
-               Objects.equals(lastName, user.lastName) &&
-               role == user.role;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(email, firstName, lastName, role);
     }
 }
