@@ -21,8 +21,7 @@ public class UserRepository {
         try {
             var doc = firestore.collection(USERS_COLLECTION).document(email).get().get();
             return Optional.ofNullable(doc.toObject(User.class));
-        } catch (InterruptedException | ExecutionException e) {
-            log.error(e.toString());
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -36,7 +35,6 @@ public class UserRepository {
             log.info("New user saved: " + user.getEmail());
             return findByEmail(user.getEmail()).orElseThrow();
         } catch (ExecutionException | InterruptedException e) {
-            log.error(e.toString());
             throw new RuntimeException(e);
         }
     }

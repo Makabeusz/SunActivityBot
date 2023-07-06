@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @Override
     @Exclude
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.roleName()));
     }
 
     @Override

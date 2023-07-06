@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class SecurityController {
 
     private final AuthenticationService service;
 
@@ -21,7 +21,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.register(request));
     }
 
-    @PostMapping("/authenticate")
+    @PostMapping()
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {

@@ -13,6 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.sojka.sunactivity.security.user.Role.ADMIN;
+import static com.sojka.sunactivity.security.user.Role.USER;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -23,17 +26,21 @@ public class SunSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // TODO: think through all SunApp access, roles and everything
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r -> r
                         .requestMatchers("/auth/**")
                         .permitAll())
                 .authorizeHttpRequests(r -> r
+                        .requestMatchers("/sun/**")
+                        .hasRole(ADMIN.name()))
+                .authorizeHttpRequests(r -> r
                         .requestMatchers(HttpMethod.GET)
-                        .hasRole("USER"))
+                        .hasRole(USER.name()))
                 .authorizeHttpRequests(r -> r
                         .anyRequest()
-                        .hasRole("ADMIN"))
+                        .hasRole(ADMIN.name()))
                 .sessionManagement(s -> s
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authProvider)

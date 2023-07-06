@@ -28,10 +28,10 @@ public class SunService {
         Set<EarthGbCme> cmes = donki.getAndPersistYesterdayEarthGbCmes();
         if (cmes.isEmpty()) return Collections.emptySet();
         log.info("Posting {} events to {} social media platforms", cmes.size(), services.size());
-        return post(cmes);
+        return postToAllSocialMediaPlatforms(cmes);
     }
 
-    public Set<Set<SocialMediaPost>> post(Collection<EarthGbCme> cmes) {
+    public Set<Set<SocialMediaPost>> postToAllSocialMediaPlatforms(Collection<EarthGbCme> cmes) {
         Set<Set<SocialMediaPost>> postedOrScheduled = new LinkedHashSet<>();
         for (SocialMediaService service : services) {
             LinkedList<SocialMediaPost> posts = service.preparePosts(cmes);

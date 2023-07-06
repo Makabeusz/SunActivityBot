@@ -2,9 +2,9 @@ package com.sojka.sunactivity.security.auth;
 
 import com.sojka.sunactivity.security.jwt.JwtService;
 import com.sojka.sunactivity.security.user.Role;
+import com.sojka.sunactivity.security.user.User;
 import com.sojka.sunactivity.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import com.sojka.sunactivity.security.user.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,7 +30,7 @@ public class AuthenticationService {
                 .build();
         User saved = repository.save(user);
         if (!saved.equals(user)) {
-            throw new AuthenticationServiceException("User not saved correctly");
+            throw new AuthenticationServiceException("User not saved correctly: " + request.getEmail());
         }
         var token = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
@@ -46,7 +46,8 @@ public class AuthenticationService {
         );
         User user = repository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new AuthenticationServiceException(
-                        String.format("Authenticated correctly, but did not find email: %s", request.getEmail()))
+                        String.format("Authenticated correctly, but did not find the email at the same time: " +
+                                      "%s", request.getEmail()))
         );
         String token = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
