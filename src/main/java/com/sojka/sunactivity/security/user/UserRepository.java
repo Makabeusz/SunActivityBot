@@ -27,4 +27,18 @@ public class UserRepository {
         }
     }
 
+    public User save(User user) {
+        try {
+            firestore.collection(USERS_COLLECTION)
+                    .document(user.getEmail())
+                    .create(user)
+                    .get();
+            log.info("New user saved: " + user.getEmail());
+            return findByEmail(user.getEmail()).orElseThrow();
+        } catch (ExecutionException | InterruptedException e) {
+            log.error(e.toString());
+            throw new RuntimeException(e);
+        }
+    }
+
 }
