@@ -43,6 +43,7 @@ public class EarthGbCmeRepository {
             DocumentSnapshot doc = firestore.collection(EARTH_GB_CME_COLLECTION).document(id).get().get();
             return Optional.ofNullable(doc.toObject(EarthGbCme.class));
         } catch (ExecutionException | InterruptedException e) {
+            log.error(e.toString());
             return Optional.empty();
         }
     }
