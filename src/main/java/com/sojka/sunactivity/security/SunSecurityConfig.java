@@ -26,18 +26,14 @@ public class SunSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // TODO: think through all SunApp access, roles and everything
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(r -> r
                         .requestMatchers("/auth/**")
                         .permitAll())
                 .authorizeHttpRequests(r -> r
-                        .requestMatchers("/sun/**")
-                        .hasRole(ADMIN.name()))
-                .authorizeHttpRequests(r -> r
-                        .requestMatchers(HttpMethod.GET)
-                        .hasRole(USER.name()))
+                        .requestMatchers(HttpMethod.GET, "/donki/db/**")
+                        .hasAnyRole(USER.name(), ADMIN.name()))
                 .authorizeHttpRequests(r -> r
                         .anyRequest()
                         .hasRole(ADMIN.name()))
