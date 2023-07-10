@@ -1,5 +1,6 @@
 package com.sojka.sunactivity.social.feed.post;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class FacebookPost extends SocialMediaPost {
 
     private static final String paragraphSeparator = "\n\n";
