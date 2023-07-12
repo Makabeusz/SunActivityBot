@@ -66,6 +66,7 @@ public class DonkiHttpClient {
             return ResponseEntity.of(
                             ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(400), e.getMessage()))
                     .build();
+            // TODO: looks smelly ^
         }
     }
 

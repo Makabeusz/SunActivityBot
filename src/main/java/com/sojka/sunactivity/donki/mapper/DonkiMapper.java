@@ -3,13 +3,14 @@ package com.sojka.sunactivity.donki.mapper;
 import com.google.cloud.Timestamp;
 import com.sojka.sunactivity.donki.domain.Cme;
 import com.sojka.sunactivity.donki.domain.Cme.CmeAnalyze;
+import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze;
 import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze.Score;
 import com.sojka.sunactivity.donki.domain.WsaEnlil;
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -31,20 +32,18 @@ public final class DonkiMapper {
                 .id(cme.getActivityID())
                 .catalog(cme.getCatalog())
                 .time(EarthGbCme.Time.builder()
-                        .startTime(Timestamp.parseTimestamp(cme.getStartTime()))
-                        .arrivalTime(Timestamp.parseTimestamp(simulation.getEstimatedShockArrivalTime()))
+                        .startTime(parseTimestamp(cme.getStartTime()))
+                        .arrivalTime(parseTimestamp(simulation.getEstimatedShockArrivalTime()))
                         .duration(simulation.getEstimatedDuration())
-                        .simulationTime(Timestamp.parseTimestamp(simulation.getModelCompletionTime()))
-                        .analysisTime(Timestamp.parseTimestamp(analyze.getTime21_5()))
+                        .simulationTime(parseTimestamp(simulation.getModelCompletionTime()))
+                        .analysisTime(parseTimestamp(analyze.getTime21_5()))
                         .build())
                 .sourceLocation(cme.getSourceLocation())
                 .activeRegion(cme.getActiveRegionNum())
                 .cmeUrl(cme.getLink())
                 .simulationUrl(simulation.getLink())
                 .note(cme.getNote())
-                .instruments(cme.getInstruments().stream()
-                        .map(Cme.Instrument::getDisplayName)
-                        .toList())
+                .instruments(mapInstruments(cme.getInstruments()))
                 .kpIndex(EarthGbCme.KpIndexes.builder()
                         .kp18(simulation.getKp_18())
                         .kp90(simulation.getKp_90())
@@ -55,6 +54,18 @@ public final class DonkiMapper {
                 .impacts(mapImpacts(simulation))
                 .analyze(mapAnalyze(analyze))
                 .build();
+    }
+
+    private static List<String> mapInstruments(List<Cme.Instrument> instruments) {
+        if (instruments == null) return Collections.emptyList();
+        return instruments.stream()
+                .map(Cme.Instrument::getDisplayName)
+                .toList();
+    }
+
+    private static Timestamp parseTimestamp(String time) {
+        if (time == null) return null;
+        return Timestamp.parseTimestamp(time);
     }
 
     private static List<EarthGbCme.Impact> mapImpacts(WsaEnlil simulation) {

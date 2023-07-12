@@ -2,8 +2,11 @@ package com.sojka.sunactivity.donki;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sojka.sunactivity.donki.domain.Cme;
+import com.sojka.sunactivity.donki.domain.WsaEnlil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class MockCme {
 
@@ -24,6 +27,25 @@ public final class MockCme {
 
     public static Cme getRichCme() {
         return richCme;
+    }
+
+    public static List<Cme> getNineCmes() {
+        List<Cme> cmes = new ArrayList<>();
+        var basicAnalyze = Cme.CmeAnalyze.builder()
+                .enlilList(List.of(WsaEnlil.builder()
+                        .isEarthGB(true)
+                        .link("https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24725/-1")
+                        .build()))
+                .type("S")
+                .build();
+        for (int i = 0; i < 9; i++) {
+            cmes.add(Cme.builder()
+                    .activityID(String.format("2023-07-12T12:00:00-CME-00%d", i))
+                    .startTime(String.format("2023-07-12T12:0%dZ", i))
+                    .cmeAnalyses(List.of(basicAnalyze))
+                    .build());
+        }
+        return cmes;
     }
 
     public static String getRichCmeString() {

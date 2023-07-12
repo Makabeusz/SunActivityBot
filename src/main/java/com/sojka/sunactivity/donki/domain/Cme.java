@@ -1,6 +1,7 @@
 package com.sojka.sunactivity.donki.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cme {
@@ -46,6 +48,9 @@ public class Cme {
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class CmeAnalyze {
 
         private String time21_5;
