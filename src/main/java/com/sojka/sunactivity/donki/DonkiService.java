@@ -52,7 +52,7 @@ public class DonkiService {
                 .map(DonkiMapper::mapEarthGbCme)
                 .collect(Collectors.toSet());
 
-        if (cmes.isEmpty()) {
+        if (earthGbCmes.isEmpty()) {
             log.info("No coronal mass ejections that will possibly deliver glancing blow to Earth occurred");
             return Collections.emptySet();
         }
