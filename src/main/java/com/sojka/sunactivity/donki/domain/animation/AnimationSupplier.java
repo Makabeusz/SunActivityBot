@@ -48,6 +48,7 @@ public class AnimationSupplier implements Runnable {
         }
     }
 
+    // TODO: request for animations - better name also this should be moved to HTTP client
     private void obtainAnimations(EarthGbCme cme) {
         String html = http.getViewContent(cme.getSimulationUrl()).getBody();
         List<String> animationUrls = Objects.requireNonNull(html).lines()

@@ -6,6 +6,8 @@ import com.sojka.sunactivity.donki.domain.Cme.CmeAnalyze;
 import com.sojka.sunactivity.donki.domain.EarthGbCme;
 import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze;
 import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze.Score;
+import com.sojka.sunactivity.donki.domain.Event;
+import com.sojka.sunactivity.donki.domain.Instrument;
 import com.sojka.sunactivity.donki.domain.WsaEnlil;
 
 import java.time.ZonedDateTime;
@@ -56,10 +58,10 @@ public final class DonkiMapper {
                 .build();
     }
 
-    private static List<String> mapInstruments(List<Cme.Instrument> instruments) {
+    private static List<String> mapInstruments(List<Instrument> instruments) {
         if (instruments == null) return Collections.emptyList();
         return instruments.stream()
-                .map(Cme.Instrument::getDisplayName)
+                .map(Instrument::getName)
                 .toList();
     }
 
@@ -82,7 +84,7 @@ public final class DonkiMapper {
             return null;
         }
         return cme.getLinkedEvents().stream()
-                .map(Cme.Event::getActivityID)
+                .map(Event::getId)
                 .toList();
     }
 

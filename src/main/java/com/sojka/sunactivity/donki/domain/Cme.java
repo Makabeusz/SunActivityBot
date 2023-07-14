@@ -42,12 +42,6 @@ public class Cme {
     }
 
     @Data
-    public static class Instrument {
-
-        private String displayName;
-    }
-
-    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -64,11 +58,5 @@ public class Cme {
         private Integer levelOfData;
         private String link;
         private List<WsaEnlil> enlilList;
-    }
-
-    @Data
-    public static class Event {
-
-        private String activityID;
     }
 }
