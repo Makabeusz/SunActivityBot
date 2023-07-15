@@ -1,6 +1,6 @@
 package com.sojka.sunactivity.social.feed;
 
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.social.feed.post.FacebookPost;
 import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 
@@ -24,14 +24,14 @@ public class PostCreator {
     private static final String DURATION_END_TIME_BASE = " The CME will be affecting earth up to %s.";
     private static final String ACCURACY_BASE = "The analyze is %s";
 
-    public static synchronized SocialMediaPost createFacebookPost(EarthGbCme cme) {
+    public static synchronized SocialMediaPost createFacebookPost(CmeWithSimulation cme) {
         Objects.requireNonNull(cme);
         String image = cme.getAnimationDensity() == null ? "" : cme.getAnimationDensity();
         return new FacebookPost(createTitle(cme), createSubtitle(cme), image, createAccuracyHeading(cme),
                 createImpactsHeading(cme), createNoteHeading(cme), createAnalyzeHeading(cme));
     }
 
-    static String createTitle(EarthGbCme cme) {
+    static String createTitle(CmeWithSimulation cme) {
         String level;
         switch (cme.getAnalyze().getScore()) {
             case S, C -> level = "information";
@@ -43,8 +43,8 @@ public class PostCreator {
         return String.format(TITLE_BASE, cme.getAnalyze().getScore(), level);
     }
 
-    static String createSubtitle(EarthGbCme cme) {
-        EarthGbCme.Time time = cme.getTime();
+    static String createSubtitle(CmeWithSimulation cme) {
+        CmeWithSimulation.Time time = cme.getTime();
         String region = "";
         if (cme.getActiveRegion() != null) region = " in active region " + cme.getActiveRegion();
         return String.format(SUBTITLE_BASE,
@@ -55,7 +55,7 @@ public class PostCreator {
                 createDurationEndTimeHeading(cme));
     }
 
-    static String createDurationEndTimeHeading(EarthGbCme cme) {
+    static String createDurationEndTimeHeading(CmeWithSimulation cme) {
         if (cme.getTime().getDuration() == null) return "";
 
         float duration = cme.getTime().getDuration();
@@ -65,19 +65,19 @@ public class PostCreator {
         return String.format(DURATION_END_TIME_BASE, durationEndTime);
     }
 
-    static String createAccuracyHeading(EarthGbCme cme) {
+    static String createAccuracyHeading(CmeWithSimulation cme) {
         boolean accuracy = cme.getAnalyze().getIsMostAccurate();
         return String.format(ACCURACY_BASE,
                 accuracy ? "most accurate!" : "not most accurate.");
     }
 
-    static String createImpactsHeading(EarthGbCme cme) {
-        List<EarthGbCme.Impact> impacts = cme.getImpacts();
+    static String createImpactsHeading(CmeWithSimulation cme) {
+        List<CmeWithSimulation.Impact> impacts = cme.getImpacts();
         if (impacts == null || impacts.isEmpty()) {
             return "";
         }
 
-        LinkedList<EarthGbCme.Impact> marsFirstSorted = impacts.stream()
+        LinkedList<CmeWithSimulation.Impact> marsFirstSorted = impacts.stream()
                 .sorted((i1, i2) -> {
                     if (i2.getLocation().equalsIgnoreCase("Mars")) return 1;
                     if (i1.getLocation().equalsIgnoreCase("Mars")) return -1;
@@ -97,7 +97,7 @@ public class PostCreator {
         StringBuilder sb = new StringBuilder("Ejected sun particles will reach ");
 
         if (isMars) {
-            EarthGbCme.Impact mars = marsFirstSorted.removeFirst();
+            CmeWithSimulation.Impact mars = marsFirstSorted.removeFirst();
             sb.append("Mars at ").append(ZonedDateTime.parse(mars.getArrivalTime()));
             if (mars.getIsGlancingBlow()) {
                 sb.append(" delivering glancing blow to the planet!\n");
@@ -118,7 +118,7 @@ public class PostCreator {
         if (isMars) sb.append(" hit by sun particles");
         sb.append(":\n");
 
-        for (EarthGbCme.Impact impact : marsFirstSorted) {
+        for (CmeWithSimulation.Impact impact : marsFirstSorted) {
             sb.append("- ")
                     .append(impact.getLocation())
                     .append(" at ")
@@ -134,18 +134,18 @@ public class PostCreator {
                 .trim();
     }
 
-    static String createNoteHeading(EarthGbCme cme) {
+    static String createNoteHeading(CmeWithSimulation cme) {
         if (cme.getNote() == null || cme.getNote().isBlank()) {
             return "";
         }
         return cme.getNote();
     }
 
-    static String createAnalyzeHeading(EarthGbCme cme) {
+    static String createAnalyzeHeading(CmeWithSimulation cme) {
         StringBuilder sb = new StringBuilder();
         sb.append("Analyze:\n");
         int initialSize = sb.length();
-        EarthGbCme.Analyze analyze = cme.getAnalyze();
+        CmeWithSimulation.Analyze analyze = cme.getAnalyze();
 
         if (analyze != null) {
             Optional.ofNullable(analyze.getNote())

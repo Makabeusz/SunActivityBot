@@ -1,4 +1,4 @@
-package com.sojka.sunactivity.donki.domain;
+package com.sojka.sunactivity.donki.domain.mapped;
 
 import com.google.cloud.Timestamp;
 import jakarta.validation.constraints.NotBlank;
@@ -12,14 +12,13 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
- * Coronal Mass Ejection that make glance blow on earth with embedded inside,
- * the most fresh WSA-ENLIL simulation.
+ * Coronal Mass Ejection with embedded inside the most fresh WSA-ENLIL simulation.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EarthGbCme implements Comparable<EarthGbCme> {
+public class CmeWithSimulation implements Comparable<CmeWithSimulation> {
 
     @NotBlank
     private String id;
@@ -42,9 +41,10 @@ public class EarthGbCme implements Comparable<EarthGbCme> {
     private Analyze analyze;
     private String animationDensity;
     private String animationVelocity;
+    private boolean earthGb;
 
     @Override
-    public int compareTo(EarthGbCme o) {
+    public int compareTo(CmeWithSimulation o) {
         return this.time.getStartTime().compareTo(o.time.getStartTime());
     }
 

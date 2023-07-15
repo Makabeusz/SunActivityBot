@@ -1,7 +1,7 @@
 package com.sojka.sunactivity.sun;
 
 import com.sojka.sunactivity.donki.DonkiService;
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 import com.sojka.sunactivity.social.service.SocialMediaService;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +25,13 @@ public class SunService {
 
     public Set<Set<SocialMediaPost>> getAndPostCmeData() {
         log.info("Started main job");
-        Set<EarthGbCme> cmes = donki.getAndPersistYesterdayEarthGbCmes();
+        Set<CmeWithSimulation> cmes = donki.getAndPersistYesterdayEarthGbCmes();
         if (cmes.isEmpty()) return Collections.emptySet();
         log.info("Posting {} events to {} social media platforms", cmes.size(), services.size());
         return postToAllSocialMediaPlatforms(cmes);
     }
 
-    public Set<Set<SocialMediaPost>> postToAllSocialMediaPlatforms(Collection<EarthGbCme> cmes) {
+    public Set<Set<SocialMediaPost>> postToAllSocialMediaPlatforms(Collection<CmeWithSimulation> cmes) {
         Set<Set<SocialMediaPost>> postedOrScheduled = new LinkedHashSet<>();
         for (SocialMediaService service : services) {
             LinkedList<SocialMediaPost> posts = service.preparePosts(cmes);

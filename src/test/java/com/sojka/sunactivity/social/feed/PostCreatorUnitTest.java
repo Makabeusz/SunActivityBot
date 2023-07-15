@@ -1,6 +1,6 @@
 package com.sojka.sunactivity.social.feed;
 
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.donki.domain.MockEarthGbCme;
 import com.sojka.sunactivity.donki.domain.MockEarthGbCme.MockImpacts;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ class PostCreatorUnitTest {
 
     @Test
     void createImpactsHeading_minimalCmeWithMarsOnly_onlyMars() {
-        EarthGbCme minimalWithMarsOnly = MockEarthGbCme.firstMinimal();
+        CmeWithSimulation minimalWithMarsOnly = MockEarthGbCme.firstMinimal();
         minimalWithMarsOnly.setImpacts(List.of(MockImpacts.mars()));
 
         assertThat(PostCreator.createImpactsHeading(minimalWithMarsOnly).trim())
@@ -22,7 +22,7 @@ class PostCreatorUnitTest {
 
     @Test
     void createImpactsHeading_minimalCmeWithMarsAndOtherSatellites_marsFirstAndOther() {
-        EarthGbCme minimalWithVariousImpacts = MockEarthGbCme.firstMinimal();
+        CmeWithSimulation minimalWithVariousImpacts = MockEarthGbCme.firstMinimal();
         minimalWithVariousImpacts.setImpacts(List.of(MockImpacts.lucy(), MockImpacts.mars(), MockImpacts.lascoC2()));
 
         assertThat(PostCreator.createImpactsHeading(minimalWithVariousImpacts).trim())
@@ -35,7 +35,7 @@ class PostCreatorUnitTest {
 
     @Test
     void createImpactsHeading_minimalCmeWithoutMarsAndWithOtherSatellites_marsFirstAndOther() {
-        EarthGbCme minimalWithoutMarsOnly = MockEarthGbCme.firstMinimal();
+        CmeWithSimulation minimalWithoutMarsOnly = MockEarthGbCme.firstMinimal();
         minimalWithoutMarsOnly.setImpacts(List.of(MockImpacts.lucy(), MockImpacts.lascoC2()));
 
         assertThat(PostCreator.createImpactsHeading(minimalWithoutMarsOnly).trim())
@@ -47,16 +47,16 @@ class PostCreatorUnitTest {
 
     @Test
     void createAnalyzeHeading_minimalCmeWithAllTheAnalyze_correctHeading() {
-        EarthGbCme minimalWithAllTheAnalyze = MockEarthGbCme.firstMinimal();
-        minimalWithAllTheAnalyze.setAnalyze(EarthGbCme.Analyze.builder()
-                .score(EarthGbCme.Analyze.Score.S)
+        CmeWithSimulation minimalWithAllTheAnalyze = MockEarthGbCme.firstMinimal();
+        minimalWithAllTheAnalyze.setAnalyze(CmeWithSimulation.Analyze.builder()
+                .score(CmeWithSimulation.Analyze.Score.S)
                 .speed(350.2F)
                 .isMostAccurate(true)
                 .latitude(10.0F)
                 .longitude(-14.7F)
                 .halfAngle(45.0F)
                 .build());
-        minimalWithAllTheAnalyze.setKpIndex(EarthGbCme.KpIndexes.builder()
+        minimalWithAllTheAnalyze.setKpIndex(CmeWithSimulation.KpIndexes.builder()
                 .kp18(3)
                 .kp90(4)
                 .kp135(5)
@@ -77,14 +77,14 @@ class PostCreatorUnitTest {
 
     @Test
     void createAnalyzeHeading_minimalCmeWithOneKpAndLatitude_correctHeading() {
-        EarthGbCme minimalWithOneKpAndLatitude = MockEarthGbCme.firstMinimal();
-        minimalWithOneKpAndLatitude.setAnalyze(EarthGbCme.Analyze.builder()
-                .score(EarthGbCme.Analyze.Score.S)
+        CmeWithSimulation minimalWithOneKpAndLatitude = MockEarthGbCme.firstMinimal();
+        minimalWithOneKpAndLatitude.setAnalyze(CmeWithSimulation.Analyze.builder()
+                .score(CmeWithSimulation.Analyze.Score.S)
                 .speed(350.2F)
                 .isMostAccurate(true)
                 .latitude(10.0F)
                 .build());
-        minimalWithOneKpAndLatitude.setKpIndex(EarthGbCme.KpIndexes.builder()
+        minimalWithOneKpAndLatitude.setKpIndex(CmeWithSimulation.KpIndexes.builder()
                 .kp180(6)
                 .build());
 
@@ -97,9 +97,9 @@ class PostCreatorUnitTest {
 
     @Test
     void createAnalyzeHeading_minimalCmeWithoutKp_correctHeading() {
-        EarthGbCme minimalCmeWithoutKp = MockEarthGbCme.firstMinimal();
-        minimalCmeWithoutKp.setAnalyze(EarthGbCme.Analyze.builder()
-                .score(EarthGbCme.Analyze.Score.S)
+        CmeWithSimulation minimalCmeWithoutKp = MockEarthGbCme.firstMinimal();
+        minimalCmeWithoutKp.setAnalyze(CmeWithSimulation.Analyze.builder()
+                .score(CmeWithSimulation.Analyze.Score.S)
                 .speed(350.2F)
                 .isMostAccurate(true)
                 .latitude(10.0F)

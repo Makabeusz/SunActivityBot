@@ -1,15 +1,15 @@
 package com.sojka.sunactivity.donki.mapper;
 
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
-import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze;
-import com.sojka.sunactivity.donki.domain.EarthGbCme.Impact;
-import com.sojka.sunactivity.donki.domain.EarthGbCme.KpIndexes;
-import com.sojka.sunactivity.donki.domain.EarthGbCme.Time;
-import com.sojka.sunactivity.donki.dto.EarthGbCmeDto;
-import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.AnalyzeDto;
-import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.ImpactDto;
-import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.KpIndexesDto;
-import com.sojka.sunactivity.donki.dto.EarthGbCmeDto.TimeDto;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation.Analyze;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation.Impact;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation.KpIndexes;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation.Time;
+import com.sojka.sunactivity.donki.dto.CmeWithSimulationDto;
+import com.sojka.sunactivity.donki.dto.CmeWithSimulationDto.AnalyzeDto;
+import com.sojka.sunactivity.donki.dto.CmeWithSimulationDto.ImpactDto;
+import com.sojka.sunactivity.donki.dto.CmeWithSimulationDto.KpIndexesDto;
+import com.sojka.sunactivity.donki.dto.CmeWithSimulationDto.TimeDto;
 
 import java.time.ZonedDateTime;
 
@@ -19,8 +19,8 @@ public final class DonkiDtoMapper {
         throw new AssertionError();
     }
 
-    public static EarthGbCmeDto toEarthGbCmeDto(EarthGbCme cme) {
-        return EarthGbCmeDto.builder()
+    public static CmeWithSimulationDto toEarthGbCmeDto(CmeWithSimulation cme) {
+        return CmeWithSimulationDto.builder()
                 .id(cme.getId())
                 .catalog(cme.getCatalog())
                 .time(mapTime(cme.getTime()))
@@ -38,6 +38,7 @@ public final class DonkiDtoMapper {
                 .analyze(mapAnalyze(cme.getAnalyze()))
                 .animationDensity(cme.getAnimationDensity())
                 .animationVelocity(cme.getAnimationVelocity())
+                .earthGb(cme.isEarthGb())
                 .build();
 
     }
@@ -51,7 +52,7 @@ public final class DonkiDtoMapper {
     }
 
     private static TimeDto mapTime(Time time) {
-        return EarthGbCmeDto.TimeDto.builder()
+        return CmeWithSimulationDto.TimeDto.builder()
                 .startTime(ZonedDateTime.parse(time.getStartTime().toString()))
                 .arrivalTime(ZonedDateTime.parse(time.getArrivalTime().toString()))
                 .duration(time.getDuration())

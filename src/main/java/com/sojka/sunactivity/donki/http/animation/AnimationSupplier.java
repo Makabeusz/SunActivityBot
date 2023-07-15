@@ -1,6 +1,6 @@
-package com.sojka.sunactivity.donki.domain.animation;
+package com.sojka.sunactivity.donki.http.animation;
 
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.donki.http.DonkiHttpClient;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,24 +11,24 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Like producer in producer-consumer design pattern. The purpose of AnimationSupplier is to provide animation
- * for current {@link EarthGbCme} object in concurrent manner.
+ * for current {@link CmeWithSimulation} object in concurrent manner.
  */
 @Slf4j
 public class AnimationSupplier implements Runnable {
 
     private final AnimationQueue queue;
     private final DonkiHttpClient http;
-    private final ConcurrentLinkedQueue<EarthGbCme> result;
+    private final ConcurrentLinkedQueue<CmeWithSimulation> result;
 
 
     /**
-     * @param queue  Queue preloaded with {@link EarthGbCme} without animations
+     * @param queue  Queue preloaded with {@link CmeWithSimulation} without animations
      * @param http   Donki HTTP client
      * @param result empty holder for results
      */
     public AnimationSupplier(AnimationQueue queue,
                              DonkiHttpClient http,
-                             ConcurrentLinkedQueue<EarthGbCme> result) {
+                             ConcurrentLinkedQueue<CmeWithSimulation> result) {
         this.queue = queue;
         this.http = http;
         this.result = result;
@@ -37,10 +37,10 @@ public class AnimationSupplier implements Runnable {
     @Override
     public void run() {
         while (true) {
-            EarthGbCme cme;
+            CmeWithSimulation cme;
             try {
                 cme = queue.remove();
-                obtainAnimations(cme);
+                supplyAnimations(cme);
                 result.add(cme);
             } catch (NoSuchElementException e) {
                 break;
@@ -48,8 +48,8 @@ public class AnimationSupplier implements Runnable {
         }
     }
 
-    // TODO: request for animations - better name also this should be moved to HTTP client
-    private void obtainAnimations(EarthGbCme cme) {
+    //  TODO: request for animations - better name also this should be moved to HTTP client
+    private void supplyAnimations(CmeWithSimulation cme) {
         String html = http.getViewContent(cme.getSimulationUrl()).getBody();
         List<String> animationUrls = Objects.requireNonNull(html).lines()
                 .filter(line -> line.contains("Inner Planets Link = <a href=\""))

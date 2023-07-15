@@ -1,6 +1,6 @@
 package com.sojka.sunactivity.social.service;
 
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class MockedSocialMediaService implements SocialMediaService {
 
     @Override
-    public LinkedList<SocialMediaPost> preparePosts(Collection<EarthGbCme> cmes) {
+    public LinkedList<SocialMediaPost> preparePosts(Collection<CmeWithSimulation> cmes) {
         return cmes.stream()
                 .map(cme -> new MockedSocialMediaPost(cme.getAnimationDensity(),
                         cme.getAnalyze().getScore() + "- score notification",

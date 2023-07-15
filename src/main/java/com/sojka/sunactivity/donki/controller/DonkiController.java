@@ -1,7 +1,7 @@
 package com.sojka.sunactivity.donki.controller;
 
 import com.sojka.sunactivity.donki.DonkiService;
-import com.sojka.sunactivity.donki.dto.EarthGbCmeDto;
+import com.sojka.sunactivity.donki.dto.CmeWithSimulationDto;
 import com.sojka.sunactivity.donki.mapper.DonkiDtoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,27 +24,27 @@ public class DonkiController {
     private final DonkiService donki;
 
     @GetMapping(path = "/cme")
-    public Set<EarthGbCmeDto> getEarthCme(
+    public Set<CmeWithSimulationDto> getEarthCme(
             @RequestParam(name = "from", required = false,
                     defaultValue = "#{T(java.time.LocalDate).now().minusDays(30L)}")
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
             @RequestParam(name = "to", required = false, defaultValue = "#{T(java.time.LocalDate).now()}")
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
-        return donki.getEarthGbCmes(from, to).stream()
+        return donki.fetchEarthGbCmes(from, to).stream()
                 .map(DonkiDtoMapper::toEarthGbCmeDto)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @GetMapping(path = "/cme/yesterday")
-    public Set<EarthGbCmeDto> getYesterdayEarthCme() {
+    public Set<CmeWithSimulationDto> getYesterdayEarthCme() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        return donki.getEarthGbCmes(yesterday, yesterday).stream()
+        return donki.fetchEarthGbCmes(yesterday, yesterday).stream()
                 .map(DonkiDtoMapper::toEarthGbCmeDto)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @GetMapping(path = "/db/cme")
-    public List<EarthGbCmeDto> getEarthCmeFromDb(
+    public List<CmeWithSimulationDto> getEarthCmeFromDb(
             @RequestParam(name = "from", required = false,
                     defaultValue = "#{T(java.time.LocalDate).now().minusDays(30L)}")
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
@@ -56,7 +56,7 @@ public class DonkiController {
     }
 
     @GetMapping(path = "/db/cme/yesterday")
-    public List<EarthGbCmeDto> getYesterdayEarthCmeFromDb() {
+    public List<CmeWithSimulationDto> getYesterdayEarthCmeFromDb() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         return donki.getSavedEarthGbCme(yesterday, yesterday).stream()
                 .map(DonkiDtoMapper::toEarthGbCmeDto)

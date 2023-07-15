@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.Timestamp;
 import com.sojka.sunactivity.donki.domain.Cme;
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.donki.http.DonkiHttpClient;
-import com.sojka.sunactivity.donki.repository.EarthGbCmeRepository;
+import com.sojka.sunactivity.donki.repository.CmeWithSimulationRepository;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
@@ -55,7 +55,7 @@ class DonkiServiceIntegrationTest {
     void initialize() {
         String serverUrl = server.url("").toString();
         DonkiHttpClient http = new DonkiHttpClient(serverUrl, mockedRest);
-        donkiService = new DonkiService(http, mock(EarthGbCmeRepository.class), 5, 3);
+        donkiService = new DonkiService(http, mock(CmeWithSimulationRepository.class), 5, 3);
     }
 
     @Test
@@ -66,7 +66,7 @@ class DonkiServiceIntegrationTest {
         server.enqueue(new MockResponse()
                 .setBody(MockCme.getHtmlWithAnimations())
                 .setHeader("Content-Type", "text/html;charset=ISO-8859-1"));
-        EarthGbCme.Time correctTimes = EarthGbCme.Time.builder()
+        CmeWithSimulation.Time correctTimes = CmeWithSimulation.Time.builder()
                 .startTime(Timestamp.parseTimestamp("2023-04-18T23:48Z"))
                 .arrivalTime(Timestamp.parseTimestamp("2023-04-23T19:25Z"))
                 .duration(27.1F)
@@ -78,12 +78,13 @@ class DonkiServiceIntegrationTest {
         when(mockedRest.getForEntity("https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24725/1",
                 String.class)).thenReturn(ResponseEntity.ok(MockCme.getHtmlWithAnimations()));
 
-        Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getAndPersistYesterdayEarthGbCmes();
+        Set<CmeWithSimulation> yesterdayCmeWithSimulations = donkiService.getAndPersistYesterdayEarthGbCmes();
 
-        assertThat(yesterdayEarthGbCmes)
+        assertThat(yesterdayCmeWithSimulations)
                 .singleElement()
                 .hasFieldOrPropertyWithValue("id", "2023-04-18T23:48:00-CME-001")
-                .hasFieldOrPropertyWithValue("time", correctTimes);
+                .hasFieldOrPropertyWithValue("time", correctTimes)
+                .hasFieldOrPropertyWithValue("earthGb", true);
     }
 
     @Test
@@ -102,16 +103,17 @@ class DonkiServiceIntegrationTest {
         when(mockedRest.getForEntity("https://webtools.ccmc.gsfc.nasa.gov/DONKI/view/WSA-ENLIL/24725/1",
                 String.class)).thenReturn(ResponseEntity.ok(MockCme.getHtmlWithAnimations()));
 
-        Set<EarthGbCme> yesterdayEarthGbCmes = donkiService.getAndPersistYesterdayEarthGbCmes();
+        Set<CmeWithSimulation> yesterdayCmeWithSimulations = donkiService.getAndPersistYesterdayEarthGbCmes();
 
-        assertThat(yesterdayEarthGbCmes)
+        assertThat(yesterdayCmeWithSimulations)
                 .hasSize(9)
                 .allMatch(cme -> cme.getAnimationDensity()
                                 .equals("http://iswa.gsfc.nasa.gov/downloads/20230601_024400_2.0_anim.tim-den.gif"),
                         "dummy density GIF")
                 .allMatch(cme -> cme.getAnimationVelocity()
                                 .equals("http://iswa.gsfc.nasa.gov/downloads/20230601_024400_2.0_anim.tim-vel.gif"),
-                        "dummy velocity GIF");
+                        "dummy velocity GIF")
+                .allMatch(CmeWithSimulation::isEarthGb);
     }
 
     private static URI donkiCmeUri() {

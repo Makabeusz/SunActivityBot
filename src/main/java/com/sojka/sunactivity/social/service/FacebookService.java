@@ -3,7 +3,7 @@ package com.sojka.sunactivity.social.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import com.sojka.sunactivity.social.feed.PostCreator;
 import com.sojka.sunactivity.social.feed.post.FacebookPost;
 import com.sojka.sunactivity.social.feed.post.SocialMediaPost;
@@ -34,7 +34,7 @@ public class FacebookService implements SocialMediaService {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Override
-    public LinkedList<SocialMediaPost> preparePosts(Collection<EarthGbCme> cmes) {
+    public LinkedList<SocialMediaPost> preparePosts(Collection<CmeWithSimulation> cmes) {
         return cmes.stream()
                 .sorted()
                 .map(PostCreator::createFacebookPost)

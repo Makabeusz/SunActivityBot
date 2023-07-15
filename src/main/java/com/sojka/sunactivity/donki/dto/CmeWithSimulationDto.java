@@ -1,6 +1,6 @@
 package com.sojka.sunactivity.donki.dto;
 
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,12 +8,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * Coronal Mass Ejection that make glance blow on earth with embedded inside,
- * the most fresh WSA-ENLIL simulation. Data transfer object {@link EarthGbCme}
+ * @see CmeWithSimulation
  */
 @Data
 @Builder
-public class EarthGbCmeDto {
+public class CmeWithSimulationDto {
 
     private String id;
     private String catalog;
@@ -30,6 +29,7 @@ public class EarthGbCmeDto {
     private AnalyzeDto analyze;
     private String animationDensity;
     private String animationVelocity;
+    private boolean earthGb;
 
     @Data
     @Builder

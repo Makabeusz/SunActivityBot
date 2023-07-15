@@ -3,9 +3,9 @@ package com.sojka.sunactivity.donki.mapper;
 import com.google.cloud.Timestamp;
 import com.sojka.sunactivity.donki.domain.Cme;
 import com.sojka.sunactivity.donki.domain.Cme.CmeAnalyze;
-import com.sojka.sunactivity.donki.domain.EarthGbCme;
-import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze;
-import com.sojka.sunactivity.donki.domain.EarthGbCme.Analyze.Score;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation.Analyze;
+import com.sojka.sunactivity.donki.domain.mapped.CmeWithSimulation.Analyze.Score;
 import com.sojka.sunactivity.donki.domain.Event;
 import com.sojka.sunactivity.donki.domain.Instrument;
 import com.sojka.sunactivity.donki.domain.WsaEnlil;
@@ -23,17 +23,17 @@ public final class DonkiMapper {
         throw new AssertionError();
     }
 
-    public static EarthGbCme mapEarthGbCme(Cme cme) {
+    public static CmeWithSimulation mapCmeWithSimulation(Cme cme) {
         if (!cme.willDeliverEarthGlancingBlow()) {
             throw new DonkiMapperException("Given CME will not deliver glancing blow to Earth");
         }
         WsaEnlil simulation = getMostRecentSimulation(cme);
         CmeAnalyze analyze = getMostRecentCmeAnalyze(cme);
 
-        return EarthGbCme.builder()
+        return CmeWithSimulation.builder()
                 .id(cme.getActivityID())
                 .catalog(cme.getCatalog())
-                .time(EarthGbCme.Time.builder()
+                .time(CmeWithSimulation.Time.builder()
                         .startTime(parseTimestamp(cme.getStartTime()))
                         .arrivalTime(parseTimestamp(simulation.getEstimatedShockArrivalTime()))
                         .duration(simulation.getEstimatedDuration())
@@ -46,7 +46,7 @@ public final class DonkiMapper {
                 .simulationUrl(simulation.getLink())
                 .note(cme.getNote())
                 .instruments(mapInstruments(cme.getInstruments()))
-                .kpIndex(EarthGbCme.KpIndexes.builder()
+                .kpIndex(CmeWithSimulation.KpIndexes.builder()
                         .kp18(simulation.getKp_18())
                         .kp90(simulation.getKp_90())
                         .kp135(simulation.getKp_135())
@@ -55,6 +55,7 @@ public final class DonkiMapper {
                 .linkedEvents(mapLinkedEvents(cme))
                 .impacts(mapImpacts(simulation))
                 .analyze(mapAnalyze(analyze))
+                .earthGb(simulation.getIsEarthGB())
                 .build();
     }
 
@@ -70,7 +71,7 @@ public final class DonkiMapper {
         return Timestamp.parseTimestamp(time);
     }
 
-    private static List<EarthGbCme.Impact> mapImpacts(WsaEnlil simulation) {
+    private static List<CmeWithSimulation.Impact> mapImpacts(WsaEnlil simulation) {
         if (simulation.getImpactList() == null) {
             return null;
         }
@@ -103,8 +104,8 @@ public final class DonkiMapper {
                 .orElseThrow(() -> new DonkiMapperException("Missing WSA-ENLIL simulation"));
     }
 
-    private static EarthGbCme.Impact mapImpact(WsaEnlil.Impact impact) {
-        return EarthGbCme.Impact.builder()
+    private static CmeWithSimulation.Impact mapImpact(WsaEnlil.Impact impact) {
+        return CmeWithSimulation.Impact.builder()
                 .arrivalTime(impact.getArrivalTime())
                 .location(impact.getLocation())
                 .isGlancingBlow(impact.getIsGlancingBlow())
