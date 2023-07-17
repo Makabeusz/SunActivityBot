@@ -10,8 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * The wrapper for {@link LinkedBlockingQueue}. It exposes only two methods {@link AnimationQueue#remove()}
  * and {@link AnimationQueue#initialSize()}. Its purpose is to take {@link CmeWithSimulation} objects and with help
- * of {@link AnimationSupplier} load all its animations.<br>
- * Created on top of producer-consumer design pattern idea.
+ * of {@link AnimationSupplier} load all its animations.
  */
 public class AnimationQueue {
 
